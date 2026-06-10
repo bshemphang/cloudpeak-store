@@ -1,46 +1,73 @@
 'use client';
+import Link from 'next/link';
 import { useCart } from '../context/CartContext';
+import { generateOrderMessage, getWhatsAppLink } from '../lib/whatsapp';
+import SafeImage from './SafeImage';
 
 export default function CartSidebar() {
-  const { isCartOpen, closeCart, cart, removeFromCart, cartTotal } = useCart();
+  const { isCartOpen, closeCart, cart, removeFromCart, updateQuantity, cartTotal } = useCart();
 
   if (!isCartOpen) return null;
 
+  const waLink = getWhatsAppLink(generateOrderMessage(cart, cartTotal));
+
   return (
     <>
-      {/* Dark Blur Backdrop */}
-      <div 
-        className="fixed inset-0 bg-storeBlack/60 backdrop-blur-sm z-[60] transition-opacity" 
+      <div
+        className="fixed inset-0 bg-midnightNavy/70 backdrop-blur-sm z-[60] transition-opacity"
         onClick={closeCart}
-      ></div>
+      />
 
-      {/* Slide-out Sidebar */}
-      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-storeWhite z-[70] shadow-2xl flex flex-col transform transition-transform duration-300 animate-slide-in">
-        
-        {/* Cart Header */}
-        <div className="flex justify-between items-center p-6 border-b border-borderGray">
-          <h2 className="text-xl font-black uppercase tracking-widest text-storeBlack">Your Cart</h2>
-          <button onClick={closeCart} className="text-storeBlack/50 hover:text-accentRed font-bold text-xl transition-colors">
+      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-storeWhite z-[70] shadow-2xl flex flex-col animate-slide-in">
+        <div className="flex justify-between items-center p-6 border-b border-borderGray bg-midnightNavy">
+          <h2 className="text-2xl font-display text-summitGold uppercase tracking-widest">Your Cart</h2>
+          <button
+            onClick={closeCart}
+            className="text-summitGold/60 hover:text-summitGold font-bold text-2xl transition-colors w-10 h-10 flex items-center justify-center"
+            aria-label="Close cart"
+          >
             &times;
           </button>
         </div>
 
-        {/* Cart Items */}
         <div className="flex-grow overflow-y-auto p-6 space-y-6">
           {cart.length === 0 ? (
-            <p className="text-center text-storeBlack/50 font-bold uppercase tracking-widest mt-10 text-sm">
+            <p className="text-center text-midnightNavy/50 font-bold uppercase tracking-widest mt-10 text-sm">
               Your cart is empty.
             </p>
           ) : (
             cart.map(item => (
-              <div key={item.id} className="flex gap-4 items-center">
-                <img src={item.image} alt={item.name} className="w-20 h-24 object-cover bg-cardGray" />
-                <div className="flex-grow">
-                  <h3 className="text-sm font-bold text-storeBlack uppercase">{item.name}</h3>
-                  <p className="text-xs text-storeBlack/60 font-medium tracking-widest mb-2">QTY: {item.quantity}</p>
-                  <p className="text-sm font-bold">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>
+              <div key={item.id} className="flex gap-4 items-center border-b border-borderGray pb-6">
+                <SafeImage src={item.image} alt={item.name} className="w-20 h-24 object-cover bg-cardGray shrink-0" />
+                <div className="flex-grow min-w-0">
+                  <h3 className="text-sm font-bold text-midnightNavy uppercase truncate">{item.name}</h3>
+                  <p className="text-[10px] text-midnightNavy/50 font-bold uppercase tracking-widest mt-0.5">Size: {item.size}</p>
+                  <p className="text-sm font-bold text-summitGoldDark mt-1">
+                    ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                  </p>
+
+                  <div className="flex items-center gap-3 mt-3">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="w-8 h-8 border border-borderGray flex items-center justify-center text-midnightNavy font-bold hover:border-summitGold hover:text-summitGold transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm font-bold text-midnightNavy w-6 text-center">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="w-8 h-8 border border-borderGray flex items-center justify-center text-midnightNavy font-bold hover:border-summitGold hover:text-summitGold transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-                <button onClick={() => removeFromCart(item.id)} className="text-storeBlack/30 hover:text-accentRed text-sm font-bold uppercase transition-colors">
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-midnightNavy/30 hover:text-summitGoldDark text-xs font-bold uppercase transition-colors shrink-0"
+                >
                   Remove
                 </button>
               </div>
@@ -48,17 +75,33 @@ export default function CartSidebar() {
           )}
         </div>
 
-        {/* Cart Footer / Checkout */}
-        <div className="p-6 border-t border-borderGray bg-cardGray">
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-sm font-bold uppercase tracking-widest text-storeBlack/60">Subtotal</span>
-            <span className="text-xl font-black text-storeBlack">₹{cartTotal.toLocaleString('en-IN')}</span>
+        <div className="p-6 border-t border-borderGray bg-cardGray space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-bold uppercase tracking-widest text-midnightNavy/60">Subtotal</span>
+            <span className="text-xl font-display text-midnightNavy">₹{cartTotal.toLocaleString('en-IN')}</span>
           </div>
-          <button className="w-full bg-storeBlack text-storeWhite py-5 text-sm font-black uppercase tracking-widest hover:bg-storeBlack/80 transition-colors">
-            Proceed to Checkout
-          </button>
-        </div>
 
+          <Link
+            href="/checkout"
+            onClick={closeCart}
+            className={`w-full block text-center bg-midnightNavy text-summitGold py-4 text-sm font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors ${
+              cart.length === 0 ? 'pointer-events-none opacity-40' : ''
+            }`}
+          >
+            Proceed to Checkout
+          </Link>
+
+          {cart.length > 0 && (
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 border-2 border-[#25D366] text-[#25D366] py-3 text-xs font-black uppercase tracking-widest hover:bg-[#25D366] hover:text-white transition-colors"
+            >
+              Quick Order via WhatsApp
+            </a>
+          )}
+        </div>
       </div>
     </>
   );

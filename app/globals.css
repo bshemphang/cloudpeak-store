@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body.custom-cursor-active {
+      cursor: none;
+    }
+
+    body.custom-cursor-active a,
+    body.custom-cursor-active button,
+    body.custom-cursor-active [role="button"] {
+      cursor: none;
+    }
+  }
+}
+
+@layer components {
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .font-display {
+    font-family: var(--font-bebas), Impact, sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  .prose-policy h2 {
+    @apply font-display text-2xl md:text-3xl text-midnightNavy uppercase tracking-wide mt-10 mb-4;
+  }
+
+  .prose-policy h3 {
+    @apply font-bold text-sm uppercase tracking-widest text-summitGoldDark mt-6 mb-2;
+  }
+
+  .prose-policy p {
+    @apply text-sm text-midnightNavy/75 leading-relaxed;
+  }
+
+  .prose-policy ul,
+  .prose-policy ol {
+    @apply text-sm text-midnightNavy/75 leading-relaxed pl-5 space-y-2;
+  }
+
+  .prose-policy ul {
+    @apply list-disc;
+  }
+
+  .prose-policy ol {
+    @apply list-decimal;
+  }
+
+  .prose-policy a {
+    @apply text-summitGoldDark font-semibold hover:underline;
+  }
+
+  .prose-policy strong {
+    @apply text-midnightNavy font-bold;
+  }
+
+  .prose-policy li strong {
+    @apply text-midnightNavy;
+  }
+
+  .field-label {
+    @apply block text-xs font-bold uppercase tracking-widest text-midnightNavy/60 mb-2;
+  }
+
+  .field-input {
+    @apply w-full border border-borderGray px-4 py-3 text-sm outline-none focus:border-summitGold transition-colors bg-storeWhite;
+  }
+}
