@@ -22,7 +22,10 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as ProductInput;
     if (!body.name?.trim()) return NextResponse.json({ error: 'Name is required.' }, { status: 400 });
     if (!body.price || body.price < 0) return NextResponse.json({ error: 'Valid price is required.' }, { status: 400 });
-    if (!body.images?.length) return NextResponse.json({ error: 'At least one image URL is required.' }, { status: 400 });
+    const hasImages =
+      body.colors?.some((c) => c.images?.filter(Boolean).length) ||
+      body.images?.filter(Boolean).length;
+    if (!hasImages) return NextResponse.json({ error: 'Add at least one color with image URLs.' }, { status: 400 });
 
     const product = await createProduct(body);
     return NextResponse.json({ product }, { status: 201 });

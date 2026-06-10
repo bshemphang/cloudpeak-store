@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import AdminLogin from '../../../components/admin/AdminLogin';
-import AdminNav from '../../../components/admin/AdminNav';
+import AdminShell from '../../../components/admin/AdminShell';
 import { getCustomerPrebookWhatsAppLink } from '../../../lib/whatsapp';
 import { SITE } from '../../../lib/site';
 import { ADMIN_SESSION_KEY } from '../../../lib/admin-auth';
@@ -30,6 +30,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [storageMode, setStorageMode] = useState<'supabase' | 'file'>('file');
 
   const fetchOrders = useCallback(async (pwd: string) => {
     setLoading(true);
@@ -47,6 +48,11 @@ export default function AdminOrdersPage() {
       setOrders(data.orders);
       setAuthenticated(true);
       sessionStorage.setItem(ADMIN_SESSION_KEY, pwd);
+      const statusRes = await fetch('/api/admin/status', { headers: { 'x-admin-password': pwd } });
+      if (statusRes.ok) {
+        const statusData = await statusRes.json();
+        setStorageMode(statusData.storageMode);
+      }
     } catch {
       setError('Network error');
     } finally {
@@ -100,27 +106,14 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <div className="bg-cardGray min-h-screen pb-16">
-      <header className="bg-midnightNavy text-storeWhite px-4 py-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="font-display text-2xl md:text-3xl text-summitGold uppercase tracking-wide">
-              Orders Dashboard
-            </h1>
-            <p className="text-storeWhite/50 text-sm mt-1">{orders.length} total orders</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <AdminNav />
-            <Link href="/" className="text-xs font-bold uppercase tracking-widest text-summitGold/70 hover:text-summitGold">
-              Store →
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-6xl mx-auto px-4 py-8 space-y-4">
+    <AdminShell
+      title="Orders"
+      subtitle={`${orders.length} customer orders`}
+      storageMode={storageMode}
+    >
+      <div className="max-w-4xl space-y-3">
         {orders.length === 0 ? (
-          <div className="bg-storeWhite border border-borderGray p-12 text-center">
+          <div className="bg-storeWhite rounded-2xl border border-borderGray p-12 text-center">
             <p className="text-midnightNavy/50 font-bold uppercase tracking-widest text-sm">
               No orders yet. They&apos;ll appear here when customers checkout.
             </p>
@@ -131,7 +124,7 @@ export default function AdminOrdersPage() {
             const waLink = getCustomerPrebookWhatsAppLink(order);
 
             return (
-              <div key={order.id} className="bg-storeWhite border border-borderGray overflow-hidden">
+              <div key={order.id} className="bg-storeWhite rounded-2xl border border-borderGray overflow-hidden shadow-sm">
                 <button
                   type="button"
                   onClick={() => setExpandedId(isExpanded ? null : order.id)}
@@ -177,7 +170,9 @@ export default function AdminOrdersPage() {
                       <ul className="text-sm space-y-1">
                         {order.items.map((item) => (
                           <li key={item.id} className="text-midnightNavy/80">
-                            {item.name}{item.size ? ` (${item.size})` : ''} × {item.quantity} — ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                            {item.name}
+                            {item.color ? ` · ${item.color}` : ''}
+                            {item.size ? ` · ${item.size}` : ''} × {item.quantity} — ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                           </li>
                         ))}
                       </ul>
@@ -224,6 +219,6 @@ export default function AdminOrdersPage() {
           })
         )}
       </div>
-    </div>
+    </AdminShell>
   );
 }

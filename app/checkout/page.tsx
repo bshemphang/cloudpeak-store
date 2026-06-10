@@ -53,8 +53,8 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer,
-          items: cart.map(({ id, name, price, quantity, image, size }) => ({
-            id, name, price, quantity, image, size,
+          items: cart.map(({ id, name, price, quantity, image, size, color }) => ({
+            id, name, price, quantity, image, size, color,
           })),
           subtotal: cartTotal,
         }),
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
                   <SafeImage src={item.image} alt={item.name} className="w-14 h-16 object-cover bg-storeWhite shrink-0" />
                   <div className="flex-grow min-w-0">
                     <p className="text-sm font-bold text-midnightNavy truncate">{item.name}</p>
-                    <p className="text-xs text-midnightNavy/50">Size: {item.size} · Qty: {item.quantity}</p>
+                    <p className="text-xs text-midnightNavy/50">{item.color} · {item.size} · Qty: {item.quantity}</p>
                     <p className="text-sm font-bold text-summitGoldDark">
                       ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                     </p>

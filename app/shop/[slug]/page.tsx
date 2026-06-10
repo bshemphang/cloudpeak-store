@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCart } from '../../../context/CartContext';
-import SafeImage from '../../../components/SafeImage';
+import ProductGallery from '../../../components/ProductGallery';
 import MountainRidgeDivider from '../../../components/MountainRidgeDivider';
-import { getProductPrimaryImage } from '../../../lib/product-utils';
+import { getColorImages, getProductPrimaryImage, normalizeProduct } from '../../../lib/product-utils';
 import type { Product } from '../../../types/product';
 
 export default function ProductDetailPage() {
@@ -16,7 +16,7 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [colorIndex, setColorIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [error, setError] = useState('');
 
@@ -25,8 +25,9 @@ export default function ProductDetailPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.product) {
-          setProduct(data.product);
-          setSelectedSize(data.product.sizes[0] ?? 'One Size');
+          const p = normalizeProduct(data.product);
+          setProduct(p);
+          setSelectedSize(p.sizes[0] ?? 'One Size');
         }
       })
       .finally(() => setLoading(false));
@@ -38,13 +39,15 @@ export default function ProductDetailPage() {
       setError('Please select a size.');
       return;
     }
+    const color = product.colors[colorIndex];
     setError('');
     addToCart({
       productId: product.id,
       name: product.name,
       price: product.price,
-      image: getProductPrimaryImage(product),
+      image: getProductPrimaryImage(product, colorIndex),
       size: selectedSize,
+      color: color?.name ?? 'Default',
     });
   };
 
@@ -67,8 +70,10 @@ export default function ProductDetailPage() {
     );
   }
 
-  const images = product.images.length > 0 ? product.images : [getProductPrimaryImage(product)];
-  const detailLines = product.details.split('\n').filter(Boolean);
+  const normalized = normalizeProduct(product);
+  const activeColor = normalized.colors[colorIndex] ?? normalized.colors[0];
+  const galleryImages = getColorImages(normalized, colorIndex);
+  const detailLines = normalized.details.split('\n').filter(Boolean);
 
   return (
     <div className="bg-storeWhite min-h-screen pb-24">
@@ -78,62 +83,59 @@ export default function ProductDetailPage() {
           <span className="mx-2">/</span>
           <Link href="/shop" className="hover:text-summitGoldDark">Shop</Link>
           <span className="mx-2">/</span>
-          <span className="text-midnightNavy">{product.name}</span>
+          <span className="text-midnightNavy">{normalized.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-          {/* Image gallery */}
-          <div className="space-y-4">
-            <div className="relative aspect-[3/4] bg-cardGray overflow-hidden">
-              <SafeImage
-                src={images[selectedImage]}
-                alt={product.name}
-                className="absolute inset-0 w-full h-full object-cover"
-                priority
-              />
-              {product.isNew && (
-                <span className="absolute top-4 left-4 bg-summitGold text-midnightNavy text-[10px] font-bold uppercase tracking-widest px-3 py-1">
-                  NEW
-                </span>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-1">
-                {images.map((img, i) => (
-                  <button
-                    key={img}
-                    type="button"
-                    onClick={() => setSelectedImage(i)}
-                    className={`relative w-20 h-24 shrink-0 overflow-hidden border-2 transition-colors ${
-                      selectedImage === i ? 'border-summitGold' : 'border-borderGray hover:border-summitGold/50'
-                    }`}
-                  >
-                    <SafeImage src={img} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductGallery
+            key={activeColor.name}
+            images={galleryImages}
+            alt={normalized.name}
+            isNew={normalized.isNew}
+          />
 
-          {/* Product info */}
           <div className="lg:pt-4">
-            <p className="text-xs font-bold uppercase tracking-widest text-summitGoldDark mb-2">{product.category}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-summitGoldDark mb-2">{normalized.category}</p>
             <h1 className="font-display text-4xl md:text-5xl text-midnightNavy uppercase tracking-wide leading-tight mb-4">
-              {product.name}
+              {normalized.name}
             </h1>
             <p className="text-2xl font-bold text-summitGoldDark mb-6">
-              ₹{product.price.toLocaleString('en-IN')}
+              ₹{normalized.price.toLocaleString('en-IN')}
             </p>
 
-            <p className="text-sm text-midnightNavy/75 leading-relaxed mb-8">{product.description}</p>
+            <p className="text-sm text-midnightNavy/75 leading-relaxed mb-8">{normalized.description}</p>
 
-            {/* Size selector */}
+            {normalized.colors.length > 1 && (
+              <div className="mb-8">
+                <p className="text-xs font-bold uppercase tracking-widest text-midnightNavy/60 mb-3">
+                  Color — <span className="text-midnightNavy">{activeColor.name}</span>
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {normalized.colors.map((color, i) => (
+                    <button
+                      key={color.name}
+                      type="button"
+                      onClick={() => setColorIndex(i)}
+                      title={color.name}
+                      className={`w-10 h-10 rounded-full border-2 transition-all ${
+                        colorIndex === i
+                          ? 'border-midnightNavy ring-2 ring-summitGold ring-offset-2 scale-110'
+                          : 'border-borderGray hover:border-summitGold'
+                      }`}
+                      style={{ backgroundColor: color.hex }}
+                      aria-label={color.name}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="mb-8">
               <p className="text-xs font-bold uppercase tracking-widest text-midnightNavy/60 mb-3">
-                Select Size — <span className="text-midnightNavy">{selectedSize}</span>
+                Size — <span className="text-midnightNavy">{selectedSize}</span>
               </p>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
+                {normalized.sizes.map((size) => (
                   <button
                     key={size}
                     type="button"
@@ -156,24 +158,23 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={!normalized.inStock}
                 className="flex-1 bg-midnightNavy text-summitGold py-4 text-sm font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors disabled:opacity-40"
               >
-                {product.inStock ? 'Add to Cart' : 'Sold Out'}
+                {normalized.inStock ? 'Add to Cart' : 'Sold Out'}
               </button>
-              {product.buyLink && (
+              {normalized.buyLink && (
                 <a
-                  href={product.buyLink}
+                  href={normalized.buyLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 text-center border-2 border-midnightNavy text-midnightNavy py-4 text-sm font-black uppercase tracking-widest hover:bg-midnightNavy hover:text-summitGold transition-colors"
                 >
-                  Buy Link ↗
+                  Supplier Link ↗
                 </a>
               )}
             </div>
 
-            {/* Details accordion */}
             {detailLines.length > 0 && (
               <div className="border-t border-borderGray pt-8">
                 <h2 className="font-display text-xl text-midnightNavy uppercase tracking-wide mb-4">Details</h2>

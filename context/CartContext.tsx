@@ -10,6 +10,7 @@ export type CartItem = {
   image: string;
   quantity: number;
   size: string;
+  color: string;
 };
 
 type AddToCartInput = {
@@ -18,6 +19,7 @@ type AddToCartInput = {
   price: number;
   image: string;
   size: string;
+  color: string;
   quantity?: number;
 };
 
@@ -42,8 +44,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  const addToCart = ({ productId, name, price, image, size, quantity = 1 }: AddToCartInput) => {
-    const lineId = buildCartLineId(productId, size);
+  const addToCart = ({ productId, name, price, image, size, color, quantity = 1 }: AddToCartInput) => {
+    const lineId = buildCartLineId(productId, size, color);
     setCart(prev => {
       const existing = prev.find(item => item.id === lineId);
       if (existing) {
@@ -51,7 +53,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           item.id === lineId ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prev, { id: lineId, productId, name, price, image, size, quantity }];
+      return [...prev, { id: lineId, productId, name, price, image, size, color, quantity }];
     });
     openCart();
   };

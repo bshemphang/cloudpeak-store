@@ -41,7 +41,9 @@ export default function CartSidebar() {
                 <SafeImage src={item.image} alt={item.name} className="w-20 h-24 object-cover bg-cardGray shrink-0" />
                 <div className="flex-grow min-w-0">
                   <h3 className="text-sm font-bold text-midnightNavy uppercase truncate">{item.name}</h3>
-                  <p className="text-[10px] text-midnightNavy/50 font-bold uppercase tracking-widest mt-0.5">Size: {item.size}</p>
+                  <p className="text-[10px] text-midnightNavy/50 font-bold uppercase tracking-widest mt-0.5">
+                    {item.color} · Size {item.size}
+                  </p>
                   <p className="text-sm font-bold text-summitGoldDark mt-1">
                     ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                   </p>

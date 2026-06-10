@@ -6,6 +6,7 @@ type CartItem = {
   price: number;
   quantity: number;
   size?: string;
+  color?: string;
 };
 
 const WHATSAPP_NUMBER = '910000000000';
@@ -18,7 +19,7 @@ export function generateOrderMessage(cart: CartItem[], total: number): string {
   const itemLines = cart
     .map(
       (item) =>
-        `• ${item.name}${item.size ? ` (${item.size})` : ''} × ${item.quantity} — ₹${(item.price * item.quantity).toLocaleString('en-IN')}`
+        `• ${item.name}${item.color ? ` · ${item.color}` : ''}${item.size ? ` · ${item.size}` : ''} × ${item.quantity} — ₹${(item.price * item.quantity).toLocaleString('en-IN')}`
     )
     .join('\n');
 

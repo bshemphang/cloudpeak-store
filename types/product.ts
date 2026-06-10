@@ -7,6 +7,12 @@ export const PRODUCT_CATEGORIES = [
 
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 
+export type ProductColor = {
+  name: string;
+  hex: string;
+  images: string[];
+};
+
 export type Product = {
   id: string;
   slug: string;
@@ -16,6 +22,7 @@ export type Product = {
   isNew: boolean;
   inStock: boolean;
   images: string[];
+  colors: ProductColor[];
   description: string;
   details: string;
   sizes: string[];

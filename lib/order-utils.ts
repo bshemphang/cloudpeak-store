@@ -35,7 +35,7 @@ export function generatePrebookMessageToCustomer(order: Order): string {
   const itemLines = order.items
     .map(
       (item) =>
-        `• ${item.name}${item.size ? ` (${item.size})` : ''} × ${item.quantity} — ₹${(item.price * item.quantity).toLocaleString('en-IN')}`
+        `• ${item.name}${item.color ? ` · ${item.color}` : ''}${item.size ? ` · ${item.size}` : ''} × ${item.quantity} — ₹${(item.price * item.quantity).toLocaleString('en-IN')}`
     )
     .join('\n');
 

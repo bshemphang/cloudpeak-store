@@ -82,4 +82,8 @@
   .field-input {
     @apply w-full border border-borderGray px-4 py-3 text-sm outline-none focus:border-summitGold transition-colors bg-storeWhite;
   }
+
+  .admin-section-title {
+    @apply text-xs font-bold uppercase tracking-widest text-summitGoldDark border-b border-borderGray pb-2;
+  }
 }

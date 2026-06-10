@@ -5,6 +5,7 @@ export type OrderItem = {
   quantity: number;
   image: string;
   size?: string;
+  color?: string;
 };
 
 export type CustomerDetails = {
