@@ -4,6 +4,8 @@ import { CartProvider } from '../context/CartContext'
 import { AuthProvider } from '../context/AuthContext'
 import { SITE } from '../lib/site'
 import StoreLayoutWrapper from '../components/StoreLayoutWrapper'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--font-bebas' })
@@ -28,6 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </StoreLayoutWrapper>
           </CartProvider>
         </AuthProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
