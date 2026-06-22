@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
     const isProd = process.env.NODE_ENV === 'production';
     const hasPublicAnon = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
-    // If Supabase is fully configured client-side or we are in production, enforce secure JWT verification
-    if (isSupabaseConfigured() && (hasPublicAnon || isProd || authHeader?.startsWith('Bearer '))) {
+    // If Supabase is fully configured client-side, enforce secure JWT verification
+    if (isSupabaseConfigured() && (hasPublicAnon || authHeader?.startsWith('Bearer '))) {
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
       }
