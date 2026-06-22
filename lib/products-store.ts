@@ -111,14 +111,22 @@ async function readFileProducts(): Promise<Product[]> {
     // seed below
   }
   const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct);
-  await fs.mkdir(path.dirname(PRODUCTS_PATH), { recursive: true });
-  await fs.writeFile(PRODUCTS_PATH, JSON.stringify(seeded, null, 2), 'utf-8');
+  try {
+    await fs.mkdir(path.dirname(PRODUCTS_PATH), { recursive: true });
+    await fs.writeFile(PRODUCTS_PATH, JSON.stringify(seeded, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Failed to write mock products database file:', e);
+  }
   return seeded;
 }
 
 async function writeFileProducts(products: Product[]): Promise<void> {
-  await fs.mkdir(path.dirname(PRODUCTS_PATH), { recursive: true });
-  await fs.writeFile(PRODUCTS_PATH, JSON.stringify(products.map(normalizeProduct), null, 2), 'utf-8');
+  try {
+    await fs.mkdir(path.dirname(PRODUCTS_PATH), { recursive: true });
+    await fs.writeFile(PRODUCTS_PATH, JSON.stringify(products.map(normalizeProduct), null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Failed to save products update to file:', e);
+  }
 }
 
 // ─── Supabase storage (production / Vercel) ───

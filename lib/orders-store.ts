@@ -44,15 +44,23 @@ async function readFileOrders(): Promise<Order[]> {
     const raw = await fs.readFile(ORDERS_PATH, 'utf-8');
     return JSON.parse(raw) as Order[];
   } catch {
-    await fs.mkdir(path.dirname(ORDERS_PATH), { recursive: true });
-    await fs.writeFile(ORDERS_PATH, '[]', 'utf-8');
+    try {
+      await fs.mkdir(path.dirname(ORDERS_PATH), { recursive: true });
+      await fs.writeFile(ORDERS_PATH, '[]', 'utf-8');
+    } catch (e) {
+      console.error('Failed to write fallback orders database file:', e);
+    }
     return [];
   }
 }
 
 async function writeFileOrders(orders: Order[]): Promise<void> {
-  await fs.mkdir(path.dirname(ORDERS_PATH), { recursive: true });
-  await fs.writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2), 'utf-8');
+  try {
+    await fs.mkdir(path.dirname(ORDERS_PATH), { recursive: true });
+    await fs.writeFile(ORDERS_PATH, JSON.stringify(orders, null, 2), 'utf-8');
+  } catch (e) {
+    console.error('Failed to save orders update to file:', e);
+  }
 }
 
 async function getAllOrdersSupabase(): Promise<Order[]> {
