@@ -105,11 +105,18 @@ export default function AdminOrdersPage() {
     );
   }
 
+  const logout = () => {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    setAuthenticated(false);
+    setPassword('');
+  };
+
   return (
     <AdminShell
       title="Orders"
       subtitle={`${orders.length} customer orders`}
       storageMode={storageMode}
+      onLogout={logout}
     >
       <div className="max-w-4xl space-y-3">
         {orders.length === 0 ? (

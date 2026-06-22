@@ -5,33 +5,30 @@ type LogoProps = {
   className?: string;
 };
 
-const variantStyles = {
-  navbar: 'h-9 md:h-11',
-  footer: 'h-11',
-  plain: 'h-14',
+const imageStyles = {
+  navbar: 'h-8 md:h-10',
+  footer: 'h-8',
+  plain: 'h-12',
 };
 
-/**
- * Official logo has a baked-in white background (JPEG).
- * The "brand seal" wrapper makes that intentional on dark navy surfaces.
- * Long-term: export a PNG with transparent background from your designer.
- */
-export default function Logo({ variant = 'navbar', className = '' }: LogoProps) {
-  const sealClass =
-    variant === 'navbar'
-      ? 'bg-cardGray rounded-lg px-2 py-1 shadow-md ring-1 ring-summitGold/30'
-      : variant === 'footer'
-        ? 'bg-cardGray rounded-lg px-2.5 py-1.5 ring-1 ring-summitGold/20'
-        : 'bg-cardGray rounded-xl px-3 py-2 ring-1 ring-summitGold/30 shadow-lg';
+const textStyles = {
+  navbar: 'text-lg md:text-xl tracking-[0.15em]',
+  footer: 'text-xl md:text-2xl tracking-[0.2em]',
+  plain: 'text-2xl md:text-3xl tracking-[0.25em]',
+};
 
+export default function Logo({ variant = 'navbar', className = '' }: LogoProps) {
   return (
-    <div className={`inline-flex items-center justify-center ${sealClass} ${className}`}>
+    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={SITE.logo}
-        alt={`${SITE.name} Logo`}
-        className={`${variantStyles[variant]} w-auto object-contain block`}
+        src="/images/logo-bg.png"
+        alt={`${SITE.name} Icon`}
+        className={`${imageStyles[variant]} w-auto object-contain block`}
       />
+      <span className={`font-display text-summitGold uppercase font-bold leading-none ${textStyles[variant]}`}>
+        {SITE.name}
+      </span>
     </div>
   );
 }

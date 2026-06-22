@@ -31,3 +31,29 @@ create table if not exists orders (
 
 create index if not exists products_slug_idx on products (slug);
 create index if not exists orders_created_at_idx on orders (created_at desc);
+
+-- Profiles table for customer address and details
+create table if not exists profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  full_name text,
+  phone text,
+  address text,
+  city text,
+  state text,
+  pincode text,
+  updated_at timestamptz not null default now()
+);
+
+-- Enable Row Level Security
+alter table profiles enable row level security;
+
+-- Policies
+create policy "Users can view their own profile." on profiles
+  for select using (auth.uid() = id);
+
+create policy "Users can insert their own profile." on profiles
+  for insert with check (auth.uid() = id);
+
+create policy "Users can update their own profile." on profiles
+  for update using (auth.uid() = id);
+

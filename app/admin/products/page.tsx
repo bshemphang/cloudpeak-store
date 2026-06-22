@@ -44,7 +44,7 @@ function formFromProduct(p: Product): ProductInput {
 }
 
 export default function AdminProductsPage() {
-  const { password, setPassword, authenticated, loading, error, login, getPassword } = useAdminAuth();
+  const { password, setPassword, authenticated, loading, error, login, getPassword, logout } = useAdminAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<ProductInput>(emptyForm);
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
@@ -176,6 +176,7 @@ export default function AdminProductsPage() {
       title="Products"
       subtitle={`${products.length} items in your catalogue`}
       storageMode={storageMode}
+      onLogout={logout}
       actions={
         !showForm ? (
           <button

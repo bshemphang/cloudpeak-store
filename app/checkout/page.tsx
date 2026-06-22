@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import SafeImage from '../../components/SafeImage';
 import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import { SITE } from '../../lib/site';
@@ -24,11 +25,27 @@ const emptyCustomer: CustomerDetails = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, cartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const prebookAmount = calculatePrebookAmount(cartTotal);
+
+  useEffect(() => {
+    if (user) {
+      setCustomer((prev) => ({
+        ...prev,
+        fullName: user.profile?.fullName || prev.fullName || '',
+        phone: user.profile?.phone || prev.phone || '',
+        email: user.email || prev.email || '',
+        address: user.profile?.address || prev.address || '',
+        city: user.profile?.city || prev.city || '',
+        state: user.profile?.state || prev.state || '',
+        pincode: user.profile?.pincode || prev.pincode || '',
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (cart.length === 0) {
@@ -90,6 +107,17 @@ export default function CheckoutPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 grid grid-cols-1 lg:grid-cols-5 gap-10">
         <form onSubmit={handleSubmit} className="lg:col-span-3 space-y-6">
+          {!user && (
+            <div className="bg-cardGray border border-borderGray p-4 text-xs text-midnightNavy/80 leading-relaxed flex justify-between items-center gap-3">
+              <span>Already have an account? Sign in to checkout faster and auto-fill your delivery address.</span>
+              <Link
+                href="/login?redirect=/checkout"
+                className="bg-midnightNavy text-summitGold px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors whitespace-nowrap"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
           <h2 className="font-display text-2xl text-midnightNavy uppercase tracking-wide">
             Delivery Details
           </h2>

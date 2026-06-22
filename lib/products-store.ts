@@ -200,19 +200,37 @@ export function getStorageMode(): 'supabase' | 'file' {
 }
 
 export async function getAllProducts(): Promise<Product[]> {
-  if (isSupabaseConfigured()) return getAllProductsSupabase();
+  if (isSupabaseConfigured()) {
+    try {
+      return await getAllProductsSupabase();
+    } catch (err) {
+      console.warn('Supabase error: getAllProducts failed. Falling back to local file storage.', err);
+    }
+  }
   return readFileProducts();
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  if (isSupabaseConfigured()) return getProductBySlugSupabase(slug);
+  if (isSupabaseConfigured()) {
+    try {
+      return await getProductBySlugSupabase(slug);
+    } catch (err) {
+      console.warn('Supabase error: getProductBySlug failed. Falling back to local file storage.', err);
+    }
+  }
   const products = await readFileProducts();
   const found = products.find((p) => p.slug === slug || p.id === slug);
   return found ? normalizeProduct(found) : null;
 }
 
 export async function createProduct(input: ProductInput): Promise<Product> {
-  if (isSupabaseConfigured()) return createProductSupabase(input);
+  if (isSupabaseConfigured()) {
+    try {
+      return await createProductSupabase(input);
+    } catch (err) {
+      console.warn('Supabase error: createProduct failed. Falling back to local file storage.', err);
+    }
+  }
 
   const products = await readFileProducts();
   const product = inputToProduct(input);
@@ -225,7 +243,13 @@ export async function createProduct(input: ProductInput): Promise<Product> {
 }
 
 export async function updateProduct(slug: string, input: ProductInput): Promise<Product | null> {
-  if (isSupabaseConfigured()) return updateProductSupabase(slug, input);
+  if (isSupabaseConfigured()) {
+    try {
+      return await updateProductSupabase(slug, input);
+    } catch (err) {
+      console.warn('Supabase error: updateProduct failed. Falling back to local file storage.', err);
+    }
+  }
 
   const products = await readFileProducts();
   const index = products.findIndex((p) => p.slug === slug || p.id === slug);
@@ -241,7 +265,13 @@ export async function updateProduct(slug: string, input: ProductInput): Promise<
 }
 
 export async function deleteProduct(slug: string): Promise<boolean> {
-  if (isSupabaseConfigured()) return deleteProductSupabase(slug);
+  if (isSupabaseConfigured()) {
+    try {
+      return await deleteProductSupabase(slug);
+    } catch (err) {
+      console.warn('Supabase error: deleteProduct failed. Falling back to local file storage.', err);
+    }
+  }
 
   const products = await readFileProducts();
   const filtered = products.filter((p) => p.slug !== slug && p.id !== slug);

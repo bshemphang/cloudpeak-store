@@ -87,26 +87,74 @@ async function updateOrderStatusSupabase(id: string, status: Order['status']): P
   return data ? rowToOrder(data as OrderRow) : null;
 }
 
+async function getOrdersByEmailSupabase(email: string): Promise<Order[]> {
+  const supabase = getSupabase()!;
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('customer->>email', email)
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data as OrderRow[]).map(rowToOrder);
+}
+
+export async function getOrdersByEmail(email: string): Promise<Order[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      return await getOrdersByEmailSupabase(email);
+    } catch (err) {
+      console.warn('Supabase error: getOrdersByEmail failed. Falling back to local file storage.', err);
+    }
+  }
+  const orders = await readFileOrders();
+  return orders.filter((o) => o.customer.email.toLowerCase() === email.toLowerCase());
+}
+
 export async function getAllOrders(): Promise<Order[]> {
-  if (isSupabaseConfigured()) return getAllOrdersSupabase();
+  if (isSupabaseConfigured()) {
+    try {
+      return await getAllOrdersSupabase();
+    } catch (err) {
+      console.warn('Supabase error: getAllOrders failed. Falling back to local file storage.', err);
+    }
+  }
   return readFileOrders();
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {
-  if (isSupabaseConfigured()) return getOrderByIdSupabase(id);
+  if (isSupabaseConfigured()) {
+    try {
+      return await getOrderByIdSupabase(id);
+    } catch (err) {
+      console.warn('Supabase error: getOrderById failed. Falling back to local file storage.', err);
+    }
+  }
   const orders = await readFileOrders();
   return orders.find((o) => o.id === id) ?? null;
 }
 
 export async function saveOrder(order: Order): Promise<void> {
-  if (isSupabaseConfigured()) return saveOrderSupabase(order);
+  if (isSupabaseConfigured()) {
+    try {
+      await saveOrderSupabase(order);
+      return;
+    } catch (err) {
+      console.warn('Supabase error: saveOrder failed. Falling back to local file storage.', err);
+    }
+  }
   const orders = await readFileOrders();
   orders.unshift(order);
   await writeFileOrders(orders);
 }
 
 export async function updateOrderStatus(id: string, status: Order['status']): Promise<Order | null> {
-  if (isSupabaseConfigured()) return updateOrderStatusSupabase(id, status);
+  if (isSupabaseConfigured()) {
+    try {
+      return await updateOrderStatusSupabase(id, status);
+    } catch (err) {
+      console.warn('Supabase error: updateOrderStatus failed. Falling back to local file storage.', err);
+    }
+  }
   const orders = await readFileOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) return null;
