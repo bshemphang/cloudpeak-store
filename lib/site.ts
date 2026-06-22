@@ -1,6 +1,6 @@
 export const SITE = {
   name: 'Cloudpeak',
-  logo: '/images/logo.png',
+  logo: '/images/logo-bg.png',
   email: 'support@cloudpeak.in',
   collabEmail: 'collabs@cloudpeak.in',
   location: 'Shillong, Meghalaya, India',
