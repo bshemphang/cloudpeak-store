@@ -30,6 +30,10 @@ type AuthContextType = {
   updateProfile: (profile: Partial<CustomerProfile>) => Promise<{ error?: string }>;
 };
 
+function newTimeISO(): string {
+  return new Date().toISOString();
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -162,8 +166,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         return {};
-      } catch (err: any) {
-        return { error: err.message || 'Something went wrong.' };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Something went wrong.';
+        return { error: message };
       }
     } else {
       // Mock Mode: Register locally
@@ -210,8 +215,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         if (error) return { error: error.message };
         return {};
-      } catch (err: any) {
-        return { error: err.message || 'Authentication failed.' };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Authentication failed.';
+        return { error: message };
       }
     } else {
       // Mock Mode: Verify locally
@@ -245,8 +251,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         if (error) return { error: error.message };
         return {};
-      } catch (err: any) {
-        return { error: err.message || 'Failed to initialize Google Sign-in.' };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to initialize Google Sign-in.';
+        return { error: message };
       }
     } else {
       // Mock Mode: Simulate Google Login
@@ -318,8 +325,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser((prev) => prev ? { ...prev, profile: newProfile } : null);
         return {};
-      } catch (err: any) {
-        return { error: err.message || 'Failed to update profile.' };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to update profile.';
+        return { error: message };
       }
     } else {
       // Mock Mode: Save locally
@@ -337,9 +345,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  function newTimeISO() {
-    return new Date().toISOString();
-  }
 
   return (
     <AuthContext.Provider

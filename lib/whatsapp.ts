@@ -1,4 +1,4 @@
-import type { Order } from '../types/order';
+import type { Order, CustomerDetails } from '../types/order';
 import { formatPhoneForWhatsApp, generatePrebookMessageToCustomer } from './order-utils';
 
 type CartItem = {
@@ -32,6 +32,34 @@ export function generateOrderMessage(cart: CartItem[], total: number): string {
     '',
     'Please confirm availability and payment details. Thanks!',
   ].join('\n');
+}
+
+export function generateOrderFallbackMessage(cart: CartItem[], total: number, customer: CustomerDetails): string {
+  const itemLines = cart
+    .map(
+      (item) =>
+        `• ${item.name}${item.color ? ` · ${item.color}` : ''}${item.size ? ` · ${item.size}` : ''} × ${item.quantity} — ₹${(item.price * item.quantity).toLocaleString('en-IN')}`
+    )
+    .join('\n');
+
+  return [
+    `Hi Cloudpeak! 👋 I experienced a network issue on checkout, so I'd like to place my order directly here.`,
+    '',
+    `*Items:*`,
+    itemLines,
+    '',
+    `*Total:* ₹${total.toLocaleString('en-IN')}`,
+    '',
+    `*Delivery Details:*`,
+    `Name: ${customer.fullName}`,
+    `Phone: ${customer.phone}`,
+    `Email: ${customer.email}`,
+    `Address: ${customer.address}`,
+    `City: ${customer.city}, ${customer.state} - ${customer.pincode}`,
+    customer.notes ? `Notes: ${customer.notes}` : '',
+    '',
+    `Please confirm my prebook and send payment details. Thanks!`
+  ].filter(Boolean).join('\n');
 }
 
 export function generateInquiryMessage(): string {

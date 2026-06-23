@@ -1,6 +1,13 @@
 import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import ScrollReveal from '../../components/ScrollReveal';
 import { generateInquiryMessage, getWhatsAppLink } from '../../lib/whatsapp';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Contact Us | Cloudpeak',
+  description: 'Get in touch with the Cloudpeak support team via WhatsApp for styling, pre-orders, custom Print-on-Demand (POD) inquiries, and brand collaborations.',
+  keywords: ['Cloudpeak support', 'Cloudpeak WhatsApp', 'custom streetwear design Shillong', 'dropshipping partnerships India'],
+};
 
 export default function Contact() {
   const waLink = getWhatsAppLink(generateInquiryMessage());

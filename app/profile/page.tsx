@@ -302,7 +302,7 @@ export default function ProfilePage() {
           ) : orders.length === 0 ? (
             <div className="bg-cardGray border border-borderGray p-8 text-center space-y-4">
               <p className="text-sm font-medium text-midnightNavy/60">
-                You haven't placed any orders yet.
+                You haven&apos;t placed any orders yet.
               </p>
               <Link
                 href="/shop"

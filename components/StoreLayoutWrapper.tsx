@@ -22,8 +22,10 @@ export default function StoreLayoutWrapper({ children }: { children: React.React
   return (
     <>
       <CustomCursor />
-      <AnnouncementBar />
-      <Navbar />
+      <header>
+        <AnnouncementBar />
+        <Navbar />
+      </header>
       <CartSidebar />
       <WhatsAppButton />
 

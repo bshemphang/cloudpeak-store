@@ -4,6 +4,8 @@ import { SEED_PRODUCTS } from './product-seed';
 import { normalizeProduct, normalizeProductInput } from './product-utils';
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import type { Product, ProductInput } from '../types/product';
+import { withRetry } from './retry';
+import { logger } from './logger';
 
 const PRODUCTS_PATH = path.join(process.cwd(), 'data', 'products.json');
 
@@ -135,41 +137,67 @@ async function seedSupabaseIfEmpty(): Promise<void> {
   const supabase = getSupabase();
   if (!supabase) return;
 
-  const { count } = await supabase.from('products').select('*', { count: 'exact', head: true });
-  if (count && count > 0) return;
+  try {
+    const count = await withRetry(async () => {
+      const { count, error } = await supabase.from('products').select('*', { count: 'exact', head: true });
+      if (error) throw new Error(error.message);
+      return count;
+    });
 
-  const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct).map(productToRow);
-  await supabase.from('products').insert(seeded);
+    if (count !== null && count > 0) return;
+
+    logger.info('Supabase products table is empty. Seeding products...');
+    const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct).map(productToRow);
+    await withRetry(async () => {
+      const { error } = await supabase.from('products').insert(seeded);
+      if (error) throw new Error(error.message);
+    });
+    logger.info('Supabase products table seeded successfully.');
+  } catch (err) {
+    logger.error('Failed to seed Supabase database.', err);
+  }
 }
 
 async function getAllProductsSupabase(): Promise<Product[]> {
   const supabase = getSupabase()!;
   await seedSupabaseIfEmpty();
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw new Error(error.message);
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data;
+  });
   return (data as ProductRow[]).map(rowToProduct);
 }
 
 async function getProductBySlugSupabase(slug: string): Promise<Product | null> {
   const supabase = getSupabase()!;
-  const { data: bySlug } = await supabase.from('products').select('*').eq('slug', slug).maybeSingle();
-  if (bySlug) return rowToProduct(bySlug as ProductRow);
-  const { data: byId, error } = await supabase.from('products').select('*').eq('id', slug).maybeSingle();
-  if (error) throw new Error(error.message);
-  return byId ? rowToProduct(byId as ProductRow) : null;
+  return withRetry(async () => {
+    const { data: bySlug, error: slugErr } = await supabase.from('products').select('*').eq('slug', slug).maybeSingle();
+    if (slugErr) throw new Error(slugErr.message);
+    if (bySlug) return rowToProduct(bySlug as ProductRow);
+    const { data: byId, error } = await supabase.from('products').select('*').eq('id', slug).maybeSingle();
+    if (error) throw new Error(error.message);
+    return byId ? rowToProduct(byId as ProductRow) : null;
+  });
 }
 
 async function createProductSupabase(input: ProductInput): Promise<Product> {
   const supabase = getSupabase()!;
   const product = inputToProduct(input);
-  const { data: existing } = await supabase.from('products').select('slug').eq('slug', product.slug).maybeSingle();
+  const existing = await withRetry(async () => {
+    const { data, error } = await supabase.from('products').select('slug').eq('slug', product.slug).maybeSingle();
+    if (error) throw new Error(error.message);
+    return data;
+  });
   if (existing) throw new Error('A product with this slug already exists.');
 
-  const { error } = await supabase.from('products').insert(productToRow(product));
-  if (error) throw new Error(error.message);
+  await withRetry(async () => {
+    const { error } = await supabase.from('products').insert(productToRow(product));
+    if (error) throw new Error(error.message);
+  });
   return product;
 }
 
@@ -179,16 +207,22 @@ async function updateProductSupabase(slug: string, input: ProductInput): Promise
   if (!existing) return null;
 
   const product = inputToProduct(input, existing);
-  const { data: duplicate } = await supabase
-    .from('products')
-    .select('id')
-    .eq('slug', product.slug)
-    .neq('id', existing.id)
-    .maybeSingle();
+  const duplicate = await withRetry(async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('id')
+      .eq('slug', product.slug)
+      .neq('id', existing.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data;
+  });
   if (duplicate) throw new Error('A product with this slug already exists.');
 
-  const { error } = await supabase.from('products').update(productToRow(product)).eq('id', existing.id);
-  if (error) throw new Error(error.message);
+  await withRetry(async () => {
+    const { error } = await supabase.from('products').update(productToRow(product)).eq('id', existing.id);
+    if (error) throw new Error(error.message);
+  });
   return product;
 }
 
@@ -196,8 +230,10 @@ async function deleteProductSupabase(slug: string): Promise<boolean> {
   const supabase = getSupabase()!;
   const existing = await getProductBySlugSupabase(slug);
   if (!existing) return false;
-  const { error } = await supabase.from('products').delete().eq('id', existing.id);
-  if (error) throw new Error(error.message);
+  await withRetry(async () => {
+    const { error } = await supabase.from('products').delete().eq('id', existing.id);
+    if (error) throw new Error(error.message);
+  });
   return true;
 }
 
@@ -212,7 +248,7 @@ export async function getAllProducts(): Promise<Product[]> {
     try {
       return await getAllProductsSupabase();
     } catch (err) {
-      console.warn('Supabase error: getAllProducts failed. Falling back to local file storage.', err);
+      logger.warn('Supabase error: getAllProducts failed. Falling back to local file storage.', err);
     }
   }
   return readFileProducts();
@@ -223,7 +259,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     try {
       return await getProductBySlugSupabase(slug);
     } catch (err) {
-      console.warn('Supabase error: getProductBySlug failed. Falling back to local file storage.', err);
+      logger.warn(`Supabase error: getProductBySlug failed for slug: ${slug}. Falling back to local file storage.`, err);
     }
   }
   const products = await readFileProducts();
@@ -234,9 +270,12 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 export async function createProduct(input: ProductInput): Promise<Product> {
   if (isSupabaseConfigured()) {
     try {
-      return await createProductSupabase(input);
+      const product = await createProductSupabase(input);
+      logger.info(`Product created in Supabase: ${product.id} (${product.slug})`);
+      return product;
     } catch (err) {
-      console.warn('Supabase error: createProduct failed. Falling back to local file storage.', err);
+      logger.error('Supabase error: createProduct failed. Throwing error to avoid silent data inconsistency.', err);
+      throw err;
     }
   }
 
@@ -247,15 +286,21 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   }
   products.unshift(product);
   await writeFileProducts(products);
+  logger.info(`Product created in local file: ${product.id} (${product.slug})`);
   return product;
 }
 
 export async function updateProduct(slug: string, input: ProductInput): Promise<Product | null> {
   if (isSupabaseConfigured()) {
     try {
-      return await updateProductSupabase(slug, input);
+      const product = await updateProductSupabase(slug, input);
+      if (product) {
+        logger.info(`Product updated in Supabase: ${product.id} (${product.slug})`);
+      }
+      return product;
     } catch (err) {
-      console.warn('Supabase error: updateProduct failed. Falling back to local file storage.', err);
+      logger.error(`Supabase error: updateProduct failed for slug: ${slug}. Throwing error to avoid silent data inconsistency.`, err);
+      throw err;
     }
   }
 
@@ -269,15 +314,21 @@ export async function updateProduct(slug: string, input: ProductInput): Promise<
   }
   products[index] = product;
   await writeFileProducts(products);
+  logger.info(`Product updated in local file: ${product.id} (${product.slug})`);
   return product;
 }
 
 export async function deleteProduct(slug: string): Promise<boolean> {
   if (isSupabaseConfigured()) {
     try {
-      return await deleteProductSupabase(slug);
+      const success = await deleteProductSupabase(slug);
+      if (success) {
+        logger.info(`Product deleted from Supabase: ${slug}`);
+      }
+      return success;
     } catch (err) {
-      console.warn('Supabase error: deleteProduct failed. Falling back to local file storage.', err);
+      logger.error(`Supabase error: deleteProduct failed for slug: ${slug}. Throwing error to avoid silent data inconsistency.`, err);
+      throw err;
     }
   }
 
@@ -285,5 +336,6 @@ export async function deleteProduct(slug: string): Promise<boolean> {
   const filtered = products.filter((p) => p.slug !== slug && p.id !== slug);
   if (filtered.length === products.length) return false;
   await writeFileProducts(filtered);
+  logger.info(`Product deleted from local file: ${slug}`);
   return true;
 }

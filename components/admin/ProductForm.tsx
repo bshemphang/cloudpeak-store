@@ -264,7 +264,7 @@ export default function ProductForm({
                   onChange={(e) => setForm({ ...form, isNew: e.target.checked })}
                   className="w-4 h-4 rounded border-borderGray accent-summitGold"
                 />
-                <span className="text-xs font-bold text-midnightNavy">Apply "NEW DROP" Badge</span>
+                <span className="text-xs font-bold text-midnightNavy">Apply &quot;NEW DROP&quot; Badge</span>
               </label>
             </div>
           </div>

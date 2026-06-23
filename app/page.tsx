@@ -4,6 +4,16 @@ import MountainRidgeDivider from '../components/MountainRidgeDivider';
 import ScrollReveal from '../components/ScrollReveal';
 import SafeImage from '../components/SafeImage';
 import { categoryImages } from '../lib/images';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
+  description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel. Young, Rich, Visionary.',
+  keywords: ['Cloudpeak', 'streetwear India', 'Print on Demand apparel', 'custom hoodies Shillong', 'exclusive footwear India', 'dropshipping streetwear', 'cloudpeak.in'],
+  alternates: {
+    canonical: 'https://cloudpeak.in',
+  },
+};
 
 export default function Home() {
   const collectionCategories = [
@@ -13,8 +23,46 @@ export default function Home() {
     { title: 'Jackets', img: categoryImages.jackets, large: false },
   ];
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://cloudpeak.in/#organization",
+        "name": "Cloudpeak",
+        "url": "https://cloudpeak.in",
+        "logo": "https://cloudpeak.in/images/logo-bg.png",
+        "email": "support@cloudpeak.in",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Shillong",
+          "addressRegion": "Meghalaya",
+          "addressCountry": "IN"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://cloudpeak.in/#website",
+        "url": "https://cloudpeak.in",
+        "name": "Cloudpeak",
+        "publisher": {
+          "@id": "https://cloudpeak.in/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://cloudpeak.in/shop?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  };
+
   return (
     <div className="bg-storeWhite min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
 
       <section className="relative w-full h-[75vh] md:h-[85vh] overflow-hidden bg-midnightNavy">
         <video

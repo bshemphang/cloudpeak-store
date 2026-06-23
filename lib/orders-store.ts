@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { getSupabase, isSupabaseConfigured } from './supabase';
 import type { Order } from '../types/order';
+import { withRetry } from './retry';
+import { logger } from './logger';
 
 const ORDERS_PATH = path.join(process.cwd(), 'data', 'orders.json');
 
@@ -65,44 +67,58 @@ async function writeFileOrders(orders: Order[]): Promise<void> {
 
 async function getAllOrdersSupabase(): Promise<Order[]> {
   const supabase = getSupabase()!;
-  const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-  if (error) throw new Error(error.message);
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data;
+  });
   return (data as OrderRow[]).map(rowToOrder);
 }
 
 async function getOrderByIdSupabase(id: string): Promise<Order | null> {
   const supabase = getSupabase()!;
-  const { data, error } = await supabase.from('orders').select('*').eq('id', id).maybeSingle();
-  if (error) throw new Error(error.message);
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase.from('orders').select('*').eq('id', id).maybeSingle();
+    if (error) throw new Error(error.message);
+    return data;
+  });
   return data ? rowToOrder(data as OrderRow) : null;
 }
 
 async function saveOrderSupabase(order: Order): Promise<void> {
   const supabase = getSupabase()!;
-  const { error } = await supabase.from('orders').insert(orderToRow(order));
-  if (error) throw new Error(error.message);
+  await withRetry(async () => {
+    const { error } = await supabase.from('orders').insert(orderToRow(order));
+    if (error) throw new Error(error.message);
+  });
 }
 
 async function updateOrderStatusSupabase(id: string, status: Order['status']): Promise<Order | null> {
   const supabase = getSupabase()!;
-  const { data, error } = await supabase
-    .from('orders')
-    .update({ status })
-    .eq('id', id)
-    .select()
-    .maybeSingle();
-  if (error) throw new Error(error.message);
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data;
+  });
   return data ? rowToOrder(data as OrderRow) : null;
 }
 
 async function getOrdersByEmailSupabase(email: string): Promise<Order[]> {
   const supabase = getSupabase()!;
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('customer->>email', email)
-    .order('created_at', { ascending: false });
-  if (error) throw new Error(error.message);
+  const data = await withRetry(async () => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('customer->>email', email)
+      .order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return data;
+  });
   return (data as OrderRow[]).map(rowToOrder);
 }
 
@@ -111,7 +127,7 @@ export async function getOrdersByEmail(email: string): Promise<Order[]> {
     try {
       return await getOrdersByEmailSupabase(email);
     } catch (err) {
-      console.warn('Supabase error: getOrdersByEmail failed. Falling back to local file storage.', err);
+      logger.warn(`Supabase error: getOrdersByEmail failed for ${email}. Falling back to local file storage.`, err);
     }
   }
   const orders = await readFileOrders();
@@ -123,7 +139,7 @@ export async function getAllOrders(): Promise<Order[]> {
     try {
       return await getAllOrdersSupabase();
     } catch (err) {
-      console.warn('Supabase error: getAllOrders failed. Falling back to local file storage.', err);
+      logger.warn('Supabase error: getAllOrders failed. Falling back to local file storage.', err);
     }
   }
   return readFileOrders();
@@ -134,7 +150,7 @@ export async function getOrderById(id: string): Promise<Order | null> {
     try {
       return await getOrderByIdSupabase(id);
     } catch (err) {
-      console.warn('Supabase error: getOrderById failed. Falling back to local file storage.', err);
+      logger.warn(`Supabase error: getOrderById failed for ${id}. Falling back to local file storage.`, err);
     }
   }
   const orders = await readFileOrders();
@@ -145,22 +161,30 @@ export async function saveOrder(order: Order): Promise<void> {
   if (isSupabaseConfigured()) {
     try {
       await saveOrderSupabase(order);
+      logger.info(`Order saved to Supabase: ${order.id}`);
       return;
     } catch (err) {
-      console.warn('Supabase error: saveOrder failed. Falling back to local file storage.', err);
+      logger.error(`Supabase error: saveOrder failed for order: ${order.id}. Throwing error to avoid silent data loss.`, err);
+      throw err;
     }
   }
   const orders = await readFileOrders();
   orders.unshift(order);
   await writeFileOrders(orders);
+  logger.info(`Order saved to local file: ${order.id}`);
 }
 
 export async function updateOrderStatus(id: string, status: Order['status']): Promise<Order | null> {
   if (isSupabaseConfigured()) {
     try {
-      return await updateOrderStatusSupabase(id, status);
+      const order = await updateOrderStatusSupabase(id, status);
+      if (order) {
+        logger.info(`Order status updated in Supabase: ${id} -> ${status}`);
+      }
+      return order;
     } catch (err) {
-      console.warn('Supabase error: updateOrderStatus failed. Falling back to local file storage.', err);
+      logger.error(`Supabase error: updateOrderStatus failed for order: ${id}. Throwing error to avoid silent data loss.`, err);
+      throw err;
     }
   }
   const orders = await readFileOrders();
@@ -168,5 +192,6 @@ export async function updateOrderStatus(id: string, status: Order['status']): Pr
   if (index === -1) return null;
   orders[index] = { ...orders[index], status };
   await writeFileOrders(orders);
+  logger.info(`Order status updated in local file: ${id} -> ${status}`);
   return orders[index];
 }

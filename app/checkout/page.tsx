@@ -10,6 +10,7 @@ import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import { SITE } from '../../lib/site';
 import { calculatePrebookAmount } from '../../lib/order-utils';
 import type { CustomerDetails } from '../../types/order';
+import { generateOrderFallbackMessage, getWhatsAppLink } from '../../lib/whatsapp';
 
 const emptyCustomer: CustomerDetails = {
   fullName: '',
@@ -29,6 +30,7 @@ export default function CheckoutPage() {
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showWhatsAppFallback, setShowWhatsAppFallback] = useState(false);
 
   const prebookAmount = calculatePrebookAmount(cartTotal);
 
@@ -62,6 +64,7 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setShowWhatsAppFallback(false);
     setLoading(true);
 
     try {
@@ -80,6 +83,7 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? 'Something went wrong. Please try again.');
+        setShowWhatsAppFallback(true);
         return;
       }
 
@@ -87,6 +91,7 @@ export default function CheckoutPage() {
       router.push(`/order-confirmation/${data.order.id}`);
     } catch {
       setError('Network error. Please check your connection and try again.');
+      setShowWhatsAppFallback(true);
     } finally {
       setLoading(false);
     }
@@ -226,9 +231,29 @@ export default function CheckoutPage() {
           </div>
 
           {error && (
-            <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 px-4 py-3">
-              {error}
-            </p>
+            <div className="space-y-3">
+              <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 px-4 py-3">
+                {error}
+              </p>
+              {showWhatsAppFallback && (
+                <div className="bg-summitGold/10 border border-summitGold/30 p-4 space-y-3 text-left">
+                  <p className="text-xs font-bold uppercase tracking-wider text-summitGoldDark flex items-center gap-1.5">
+                    ⚠️ Connection Issue Detected
+                  </p>
+                  <p className="text-xs text-midnightNavy/85 leading-relaxed font-medium">
+                    It looks like the server is temporarily unreachable. Don&apos;t worry — you can submit your order details directly to our team via WhatsApp to instantly secure your booking!
+                  </p>
+                  <a
+                    href={getWhatsAppLink(generateOrderFallbackMessage(cart, cartTotal, customer))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 text-center bg-[#25D366] text-white font-bold uppercase tracking-widest text-xs px-6 py-3.5 hover:bg-[#1fb855] transition-colors"
+                  >
+                    Place Order via WhatsApp ↗
+                  </a>
+                </div>
+              )}
+            </div>
           )}
 
           <button

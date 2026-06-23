@@ -4,7 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ADMIN_SESSION_KEY } from '../lib/admin-auth';
 
 export function useAdminAuth() {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem(ADMIN_SESSION_KEY) ?? '';
+    }
+    return '';
+  });
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +47,6 @@ export function useAdminAuth() {
   useEffect(() => {
     const saved = sessionStorage.getItem(ADMIN_SESSION_KEY);
     if (saved) {
-      setPassword(saved);
       login(saved);
     }
   }, [login]);

@@ -1,6 +1,13 @@
 import Link from 'next/link';
 import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import ScrollReveal from '../../components/ScrollReveal';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Our Story | Cloudpeak',
+  description: 'Born from the unapologetic energy of the Northeast, Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce. Shillong Born. Globally Minded.',
+  keywords: ['Cloudpeak story', 'Shillong streetwear', 'Northeast streetwear brand', 'POD clothing India'],
+};
 
 export default function About() {
   return (
