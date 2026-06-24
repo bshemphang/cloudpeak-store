@@ -13,6 +13,28 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://cloudpeak.in',
   },
+  openGraph: {
+    title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
+    description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel.',
+    url: 'https://cloudpeak.in',
+    siteName: 'Cloudpeak',
+    images: [
+      {
+        url: 'https://cloudpeak.in/images/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Cloudpeak Streetwear & POD',
+      },
+    ],
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
+    description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel.',
+    images: ['https://cloudpeak.in/images/logo.png'],
+  },
 };
 
 export default function Home() {
@@ -73,7 +95,7 @@ export default function Home() {
           poster={categoryImages.hero}
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         >
-          <source src="/hero.mp4" type="video/mp4" />
+          <source src="/hero-video.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-midnightNavy/70 via-midnightNavy/30 to-midnightNavy" />
 

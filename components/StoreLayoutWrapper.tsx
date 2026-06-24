@@ -57,6 +57,7 @@ export default function StoreLayoutWrapper({ children }: { children: React.React
               <ul className="space-y-4 text-sm text-storeWhite/60 font-medium">
                 <li><Link href="/privacy-policy" className="hover:text-summitGold transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/return-policy" className="hover:text-summitGold transition-colors">Return Policy</Link></li>
+                <li><Link href="/terms-and-conditions" className="hover:text-summitGold transition-colors">Terms &amp; Conditions</Link></li>
               </ul>
             </div>
             <div>

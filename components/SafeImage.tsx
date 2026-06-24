@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { IMAGE_FALLBACK } from '../lib/images';
 
 type SafeImageProps = {
@@ -21,15 +22,19 @@ export default function SafeImage({
   const [imgSrc, setImgSrc] = useState(src);
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={imgSrc}
-      alt={alt}
-      className={className}
-      loading={priority ? 'eager' : 'lazy'}
-      onError={() => {
-        if (imgSrc !== fallback) setImgSrc(fallback);
-      }}
-    />
+    <div className={`relative overflow-hidden ${className}`}>
+      <Image
+        src={imgSrc}
+        alt={alt}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+        priority={priority}
+        className="object-cover"
+        onError={() => {
+          if (imgSrc !== fallback) setImgSrc(fallback);
+        }}
+      />
+    </div>
   );
 }
+
