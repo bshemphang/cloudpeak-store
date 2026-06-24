@@ -21,15 +21,65 @@ export default function SafeImage({
 }: SafeImageProps) {
   const [imgSrc, setImgSrc] = useState(src);
 
+  // Split wrapper layout/sizing classes from image visual/transition classes
+  const classesList = className.split(' ');
+  const layoutClasses = classesList.filter(c => 
+    c.startsWith('w-') || 
+    c.startsWith('h-') || 
+    c.startsWith('absolute') || 
+    c.startsWith('relative') || 
+    c.startsWith('inset-') || 
+    c.startsWith('top-') || 
+    c.startsWith('left-') || 
+    c.startsWith('right-') || 
+    c.startsWith('bottom-') ||
+    c.startsWith('bg-') ||
+    c.startsWith('border') ||
+    c.startsWith('shrink-') ||
+    c.startsWith('grow') ||
+    c.startsWith('flex-') ||
+    c.startsWith('aspect-') ||
+    c === 'mb-4' ||
+    c.startsWith('m-') ||
+    c.startsWith('mt-') ||
+    c.startsWith('mb-') ||
+    c.startsWith('ml-') ||
+    c.startsWith('mr-')
+  ).join(' ');
+
+  const imageClasses = classesList.filter(c => 
+    !c.startsWith('w-') && 
+    !c.startsWith('h-') && 
+    !c.startsWith('absolute') && 
+    !c.startsWith('relative') && 
+    !c.startsWith('inset-') && 
+    !c.startsWith('top-') && 
+    !c.startsWith('left-') && 
+    !c.startsWith('right-') && 
+    !c.startsWith('bottom-') &&
+    !c.startsWith('bg-') &&
+    !c.startsWith('border') &&
+    !c.startsWith('shrink-') &&
+    !c.startsWith('grow') &&
+    !c.startsWith('flex-') &&
+    !c.startsWith('aspect-') &&
+    c !== 'mb-4' &&
+    !c.startsWith('m-') &&
+    !c.startsWith('mt-') &&
+    !c.startsWith('mb-') &&
+    !c.startsWith('ml-') &&
+    !c.startsWith('mr-')
+  ).join(' ');
+
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`relative overflow-hidden ${layoutClasses}`}>
       <Image
         src={imgSrc}
         alt={alt}
         fill
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         priority={priority}
-        className="object-cover"
+        className={`object-cover ${imageClasses}`}
         onError={() => {
           if (imgSrc !== fallback) setImgSrc(fallback);
         }}

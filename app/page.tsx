@@ -95,7 +95,7 @@ export default function Home() {
           poster={categoryImages.hero}
           className="absolute inset-0 w-full h-full object-cover opacity-40"
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src="/hero.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-midnightNavy/70 via-midnightNavy/30 to-midnightNavy" />
 

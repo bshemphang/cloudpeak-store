@@ -50,8 +50,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
-      <body className={`${inter.variable} ${bebasNeue.variable} bg-storeWhite text-midnightNavy font-sans antialiased min-h-screen flex flex-col`}>
+    <html lang="en" className={`${inter.variable} ${bebasNeue.variable} scroll-smooth`} data-scroll-behavior="smooth">
+      <body className="bg-storeWhite text-midnightNavy font-sans antialiased min-h-screen flex flex-col">
         {/* Google Analytics 4 Script */}
         {gaId && (
           <>
