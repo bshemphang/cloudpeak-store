@@ -71,8 +71,11 @@ export default function SafeImage({
     !c.startsWith('mr-')
   ).join(' ');
 
+  const isAbsolute = layoutClasses.includes('absolute') || layoutClasses.includes('fixed');
+  const positionClass = isAbsolute ? '' : 'relative';
+
   return (
-    <div className={`relative overflow-hidden ${layoutClasses}`}>
+    <div className={`${positionClass} overflow-hidden ${layoutClasses}`}>
       <Image
         src={imgSrc}
         alt={alt}

@@ -92,17 +92,6 @@ export default function Navbar() {
 
           <div className="flex md:hidden items-center gap-4">
             <button
-              onClick={openCart}
-              className="text-storeWhite/70 hover:text-summitGold text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 transition-colors"
-            >
-              Cart
-              {itemCount > 0 && (
-                <span className="bg-summitGold text-midnightNavy px-1.5 py-0.5 rounded-full text-[10px] font-black">
-                  {itemCount}
-                </span>
-              )}
-            </button>
-            <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="text-summitGold p-1"
               aria-label="Toggle menu"
@@ -131,6 +120,20 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <button
+            onClick={() => {
+              openCart();
+              setMobileOpen(false);
+            }}
+            className="block w-full text-left py-3 text-sm font-bold uppercase tracking-widest text-storeWhite/80 hover:text-summitGold flex items-center justify-between border-b border-summitGold/10 cursor-pointer"
+          >
+            <span>Cart</span>
+            {itemCount > 0 && (
+              <span className="bg-summitGold text-midnightNavy px-2 py-0.5 rounded-full text-[10px] font-black">
+                {itemCount}
+              </span>
+            )}
+          </button>
           {user ? (
             <>
               <Link
