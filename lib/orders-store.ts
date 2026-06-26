@@ -99,12 +99,39 @@ async function saveOrderSupabase(order: Order): Promise<void> {
   });
 }
 
-async function updateOrderStatusSupabase(id: string, status: Order['status']): Promise<Order | null> {
+async function updateOrderStatusSupabase(
+  id: string,
+  status: Order['status'],
+  payment?: any
+): Promise<Order | null> {
   const supabase = getSupabase()!;
+  const updateData: any = { status };
+
+  if (payment) {
+    const { data: current, error: fetchErr } = await supabase
+      .from('orders')
+      .select('customer')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (fetchErr) handleSupabaseError(fetchErr);
+
+    if (current && current.customer) {
+      const existingPayment = current.customer.payment || {};
+      updateData.customer = {
+        ...current.customer,
+        payment: {
+          ...existingPayment,
+          ...payment,
+        },
+      };
+    }
+  }
+
   const data = await withRetry(async () => {
     const { data, error } = await supabase
       .from('orders')
-      .update({ status })
+      .update(updateData)
       .eq('id', id)
       .select()
       .maybeSingle();
@@ -180,10 +207,14 @@ export async function saveOrder(order: Order): Promise<void> {
   logger.info(`Order saved to local file: ${order.id}`);
 }
 
-export async function updateOrderStatus(id: string, status: Order['status']): Promise<Order | null> {
+export async function updateOrderStatus(
+  id: string,
+  status: Order['status'],
+  payment?: any
+): Promise<Order | null> {
   if (isSupabaseConfigured()) {
     try {
-      const order = await updateOrderStatusSupabase(id, status);
+      const order = await updateOrderStatusSupabase(id, status, payment);
       if (order) {
         logger.info(`Order status updated in Supabase: ${id} -> ${status}`);
       }
@@ -196,7 +227,17 @@ export async function updateOrderStatus(id: string, status: Order['status']): Pr
   const orders = await readFileOrders();
   const index = orders.findIndex((o) => o.id === id);
   if (index === -1) return null;
-  orders[index] = { ...orders[index], status };
+
+  const existingPayment = orders[index].customer.payment || {};
+  orders[index] = {
+    ...orders[index],
+    status,
+    customer: {
+      ...orders[index].customer,
+      payment: payment ? { ...existingPayment, ...payment } : orders[index].customer.payment,
+    },
+  };
+
   await writeFileOrders(orders);
   logger.info(`Order status updated in local file: ${id} -> ${status}`);
   return orders[index];

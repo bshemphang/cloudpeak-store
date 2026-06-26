@@ -127,7 +127,7 @@ export default function CheckoutPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: dbOrderData.order.prebookAmount * 100, // Amount in paise (e.g. ₹299 = 29900 paise)
+          amount: dbOrderData.order.subtotal * 100, // Amount in paise (e.g. ₹299 = 29900 paise)
           currency: 'INR',
           receipt: dbOrderData.order.id,
         }),
@@ -385,7 +385,7 @@ export default function CheckoutPage() {
             disabled={loading}
             className="w-full bg-midnightNavy text-summitGold py-4 text-sm font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors disabled:opacity-50"
           >
-            {loading ? 'Processing...' : 'Pay Prebook & Place Order'}
+            {loading ? 'Processing...' : 'Pay Online & Place Order'}
           </button>
 
           <p className="text-xs text-midnightNavy/50 leading-relaxed">
@@ -406,11 +406,11 @@ export default function CheckoutPage() {
                 <li key={item.id} className="flex gap-3">
                   <SafeImage src={item.image} alt={item.name} className="w-14 h-16 object-cover bg-storeWhite shrink-0" />
                   <div className="flex-grow min-w-0">
-                    <p className="text-sm font-bold text-midnightNavy truncate">{item.name}</p>
-                    <p className="text-xs text-midnightNavy/50">{item.color} · {item.size} · Qty: {item.quantity}</p>
-                    <p className="text-sm font-bold text-summitGoldDark">
-                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                    </p>
+                     <p className="text-sm font-bold text-midnightNavy truncate">{item.name}</p>
+                     <p className="text-xs text-midnightNavy/50">{item.color} · {item.size} · Qty: {item.quantity}</p>
+                     <p className="text-sm font-bold text-summitGoldDark">
+                       ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                     </p>
                   </div>
                 </li>
               ))}
@@ -418,17 +418,13 @@ export default function CheckoutPage() {
 
             <div className="border-t border-borderGray pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-midnightNavy/60 uppercase tracking-widest text-xs font-bold">Subtotal</span>
-                <span className="font-bold">₹{cartTotal.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-midnightNavy/60 uppercase tracking-widest text-xs font-bold">Prebook ({SITE.prebookPercent}%)</span>
-                <span className="font-bold text-summitGoldDark">₹{prebookAmount.toLocaleString('en-IN')}</span>
+                <span className="text-midnightNavy/60 uppercase tracking-widest text-xs font-bold">Total Amount</span>
+                <span className="font-bold text-lg">₹{cartTotal.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
             <div className="mt-4 p-4 bg-midnightNavy/5 border border-summitGold/20 text-xs text-midnightNavy/70 leading-relaxed">
-              You will pay the prebook amount of <strong>₹{prebookAmount.toLocaleString('en-IN')}</strong> securely online via Razorpay. The remaining balance is due before dispatch.
+              You will pay the full amount of <strong>₹{cartTotal.toLocaleString('en-IN')}</strong> securely online via Razorpay.
             </div>
           </div>
         </aside>

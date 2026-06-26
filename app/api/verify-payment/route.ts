@@ -47,9 +47,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update order status in the database/store
+    // Update order status in the database/store with payment details
     logger.info(`Signature verified. Updating order status to prebook_paid for order ID: ${db_order_id}`);
-    const updatedOrder = await updateOrderStatus(db_order_id, 'prebook_paid');
+    const updatedOrder = await updateOrderStatus(db_order_id, 'prebook_paid', {
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      signature: razorpay_signature,
+      method: 'Razorpay Online Checkout',
+    });
 
     if (!updatedOrder) {
       logger.error(`Order ${db_order_id} not found in store after successful verification.`);
@@ -57,6 +62,20 @@ export async function POST(request: NextRequest) {
         { error: 'Order not found, but payment was verified.' },
         { status: 404 }
       );
+    }
+
+    // Send payment confirmation email!
+    try {
+      const { sendEmail } = await import('../../../lib/email-service');
+      const { buildOrderPaidTemplate } = await import('../../../lib/email-templates');
+      const emailHtml = buildOrderPaidTemplate(updatedOrder);
+      await sendEmail({
+        to: updatedOrder.customer.email,
+        subject: `Payment Confirmed - Order #${updatedOrder.id} 🏔️`,
+        html: emailHtml,
+      });
+    } catch (emailErr) {
+      logger.error('Failed to send payment confirmation email:', emailErr);
     }
 
     logger.info(`Successfully processed payment and updated order: ${db_order_id}`);

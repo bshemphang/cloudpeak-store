@@ -367,12 +367,8 @@ export default function ProfilePage() {
                   {/* Order Financials */}
                   <div className="bg-storeWhite border-t border-borderGray px-4 py-3 flex flex-wrap justify-between items-center gap-3 text-xs">
                     <div>
-                      <span className="text-midnightNavy/50 uppercase tracking-widest font-bold">Total: </span>
+                      <span className="text-midnightNavy/50 uppercase tracking-widest font-bold">Amount Paid: </span>
                       <strong className="text-sm font-black text-midnightNavy">₹{order.subtotal.toLocaleString('en-IN')}</strong>
-                    </div>
-                    <div>
-                      <span className="text-midnightNavy/50 uppercase tracking-widest font-bold">Prebook: </span>
-                      <strong className="text-sm font-black text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>
                     </div>
                   </div>
                 </div>

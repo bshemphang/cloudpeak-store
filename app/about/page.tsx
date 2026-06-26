@@ -34,7 +34,7 @@ export default function About() {
 
             <div className="space-y-6 text-sm text-midnightNavy/70 font-medium leading-relaxed">
               <p>
-                We operate at the intersection of streetwear culture and premium e-commerce. Whether we are sourcing trending dropshipping sneakers or engineering bespoke Print-on-Demand (POD) apparel, our rigorous commitment to quality remains our northern star.
+                We operate at the intersection of streetwear culture and premium e-commerce. Whether we are designing premium curated collections or engineering bespoke, high-quality Print-on-Demand (POD) apparel, our rigorous commitment to quality remains our northern star.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-y border-borderGray my-8">

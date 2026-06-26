@@ -8,8 +8,7 @@ export function generateOrderId(): string {
 }
 
 export function calculatePrebookAmount(subtotal: number): number {
-  const percentAmount = Math.round(subtotal * (SITE.prebookPercent / 100));
-  return Math.max(percentAmount, SITE.minPrebookAmount);
+  return subtotal;
 }
 
 export function buildOrder(payload: CreateOrderPayload): Order {
@@ -20,7 +19,7 @@ export function buildOrder(payload: CreateOrderPayload): Order {
     customer: payload.customer,
     items: payload.items,
     subtotal: payload.subtotal,
-    prebookAmount: calculatePrebookAmount(payload.subtotal),
+    prebookAmount: payload.subtotal,
   };
 }
 
@@ -48,11 +47,8 @@ export function generatePrebookMessageToCustomer(order: Order): string {
     itemLines,
     '',
     `*Order total:* ₹${order.subtotal.toLocaleString('en-IN')}`,
-    `*Prebook amount (${SITE.prebookPercent}%):* ₹${order.prebookAmount.toLocaleString('en-IN')}`,
     '',
-    'To confirm your booking and reserve your items, please pay the prebook amount via UPI. Once paid, reply here with the payment screenshot.',
-    '',
-    'Remaining balance is due before dispatch. Cancellations after prebook may forfeit the prebook amount as per our Return Policy.',
+    'Your order is pending online payment via Razorpay. Once paid, your items will be confirmed and processed for shipping.',
     '',
     '— Team Cloudpeak',
   ].join('\n');

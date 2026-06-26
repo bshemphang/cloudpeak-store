@@ -17,6 +17,18 @@ export type CustomerDetails = {
   state: string;
   pincode: string;
   notes?: string;
+  payment?: {
+    paymentId: string;
+    orderId: string;
+    signature: string;
+    method?: string;
+    refund?: {
+      refundId: string;
+      amount: number;
+      status: string;
+      createdAt: string;
+    };
+  };
 };
 
 export type OrderStatus = 'pending_prebook' | 'prebook_paid' | 'confirmed' | 'cancelled';

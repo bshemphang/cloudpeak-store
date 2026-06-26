@@ -84,6 +84,21 @@ export async function POST(request: NextRequest) {
     // Save order (wrapped with retry logic inside the store)
     await saveOrder(order);
 
+    // Send order placed email!
+    try {
+      const { sendEmail } = await import('../../../lib/email-service');
+      const { buildOrderPlacedTemplate } = await import('../../../lib/email-templates');
+      const baseUrl = request.headers.get('origin') || 'https://cloudpeak.in';
+      const emailHtml = buildOrderPlacedTemplate(order, baseUrl);
+      await sendEmail({
+        to: order.customer.email,
+        subject: `Order Placed - Pending Payment #${order.id} 🏔️`,
+        html: emailHtml,
+      });
+    } catch (emailErr) {
+      logger.error('Failed to send order placed email:', emailErr);
+    }
+
     logger.info(`Successfully placed order: ${order.id}`, { orderId: order.id, ip });
     return NextResponse.json({ order }, { status: 201 });
   } catch (err) {

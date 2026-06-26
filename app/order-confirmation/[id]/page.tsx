@@ -39,12 +39,51 @@ export default function OrderConfirmationPage() {
     );
   }
 
+  if (order.status === 'cancelled') {
+    return (
+      <div className="bg-storeWhite min-h-screen pb-24">
+        <section className="bg-red-950 py-16 text-center px-4">
+          <div className="text-4xl mb-4 text-red-500 font-bold">✕</div>
+          <h1 className="font-display text-4xl md:text-6xl text-red-500 uppercase tracking-wide mb-3">
+            Order Cancelled
+          </h1>
+          <p className="text-storeWhite/70 text-sm uppercase tracking-widest">
+            Order ID: <span className="text-red-400 font-bold">{order.id}</span>
+          </p>
+        </section>
+
+        <MountainRidgeDivider />
+
+        <div className="max-w-2xl mx-auto px-4 py-12 md:py-16 text-center space-y-8">
+          <div className="bg-cardGray border border-borderGray p-6 md:p-8 text-left space-y-4">
+            <h2 className="font-display text-xl text-midnightNavy uppercase tracking-wide text-center mb-2">
+              Order Rejected / Cancelled
+            </h2>
+            <p className="text-sm text-midnightNavy/75 leading-relaxed text-center">
+              This order has been cancelled or rejected. Any online payments made will be refunded automatically to your original payment method within 5-7 business days.
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href="/shop"
+              className="bg-midnightNavy text-summitGold px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors"
+            >
+              Back to Shop
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isPaid = order.status === 'prebook_paid' || order.status === 'confirmed';
+
   return (
     <div className="bg-storeWhite min-h-screen pb-24">
-      <section className="bg-midnightNavy py-14 md:py-20 text-center px-4">
-        <div className="text-4xl mb-4">✓</div>
+      <section className={`py-14 md:py-20 text-center px-4 ${isPaid ? 'bg-midnightNavy' : 'bg-amber-950'}`}>
+        <div className="text-4xl mb-4">{isPaid ? '✓' : '⚡'}</div>
         <h1 className="font-display text-4xl md:text-6xl text-summitGold uppercase tracking-wide mb-3">
-          {order.status === 'prebook_paid' || order.status === 'confirmed' ? 'Order Confirmed!' : 'Order Placed!'}
+          {isPaid ? 'Payment Confirmed!' : 'Payment Pending'}
         </h1>
         <p className="text-storeWhite/70 text-sm uppercase tracking-widest">
           Order ID: <span className="text-summitGold font-bold">{order.id}</span>
@@ -56,66 +95,52 @@ export default function OrderConfirmationPage() {
       <div className="max-w-2xl mx-auto px-4 py-12 md:py-16 text-center space-y-8">
         <div className="bg-cardGray border border-borderGray p-6 md:p-8 text-left space-y-4">
           <h2 className="font-display text-xl text-midnightNavy uppercase tracking-wide text-center mb-2">
-            What Happens Next?
+            Order Status Details
           </h2>
-          {order.status === 'prebook_paid' || order.status === 'confirmed' ? (
+          {isPaid ? (
             <ol className="space-y-4 text-sm text-midnightNavy/75 leading-relaxed list-decimal pl-5">
               <li>
-                Our team has verified your prebook payment of{' '}
-                <strong className="text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>.
+                We have successfully verified your full payment of{' '}
+                <strong className="text-summitGoldDark">₹{order.subtotal.toLocaleString('en-IN')}</strong> via Razorpay.
               </li>
               <li>
-                Your order is confirmed and your items are now reserved!
+                Your items have been reserved and sent to our production queue.
               </li>
               <li>
-                We will contact you on WhatsApp at{' '}
-                <strong className="text-midnightNavy">{order.customer.phone}</strong> to confirm your dispatch details.
-              </li>
-              <li>
-                The remaining balance of{' '}
-                <strong>₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</strong>{' '}
-                is due before shipping.
+                We will email you with shipping updates and a tracking number as soon as your items are dispatched.
               </li>
             </ol>
           ) : (
             <ol className="space-y-4 text-sm text-midnightNavy/75 leading-relaxed list-decimal pl-5">
               <li>
-                Our team has received your order and will review it shortly.
+                We have received your order details, but your payment of{' '}
+                <strong className="text-amber-700">₹{order.subtotal.toLocaleString('en-IN')}</strong> is still pending.
               </li>
               <li>
-                We&apos;ll contact you on WhatsApp at{' '}
-                <strong className="text-midnightNavy">{order.customer.phone}</strong> to collect the
-                prebook amount of{' '}
-                <strong className="text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>{' '}
-                ({SITE.prebookPercent}% of your order total).
+                Please complete your online payment to confirm the booking and secure your items.
               </li>
               <li>
-                Once prebook is paid, your items are reserved and we&apos;ll confirm dispatch details.
-              </li>
-              <li>
-                Remaining balance of{' '}
-                <strong>₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</strong>{' '}
-                is due before shipping.
+                If you encountered a payment issue, you can retry checkout or contact support below.
               </li>
             </ol>
           )}
         </div>
 
         <div className="text-sm text-midnightNavy/60 space-y-1">
-          <p>Confirmation sent to <strong>{order.customer.email}</strong></p>
+          <p>Confirmation and invoice sent to <strong>{order.customer.email}</strong></p>
           <p>Delivering to {order.customer.city}, {order.customer.state} — {order.customer.pincode}</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/shop"
-            className="bg-midnightNavy text-summitGold px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors"
+            className="bg-midnightNavy text-summitGold px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors text-center"
           >
             Continue Shopping
           </Link>
           <Link
             href="/contact"
-            className="border-2 border-midnightNavy text-midnightNavy px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-midnightNavy hover:text-summitGold transition-colors"
+            className="border-2 border-midnightNavy text-midnightNavy px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-midnightNavy hover:text-summitGold transition-colors text-center"
           >
             Contact Support
           </Link>

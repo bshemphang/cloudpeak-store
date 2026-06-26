@@ -85,17 +85,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>6. Pre-bookings &amp; Deposits</h2>
-        <p>
-          Select high-demand products may be offered on a pre-booking basis. To secure a pre-book slot, a deposit of 
-          <strong>{SITE.prebookPercent}%</strong> of the product value (minimum <strong>₹{SITE.minPrebookAmount}</strong>) 
-          is required at checkout. The remaining balance must be paid upon shipment or receipt as specified in the 
-          individual item policy.
-        </p>
-      </section>
-
-      <section className="space-y-4">
-        <h2>7. Payments &amp; Security</h2>
+        <h2>6. Payments &amp; Security</h2>
         <p>
           We accept payments through standard credit/debit cards, UPI, Net Banking, and authorized digital wallets 
           processed securely by third-party payment gateways. We do not store or process your credit/debit card numbers 
@@ -105,7 +95,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>8. Returns, Exchanges, &amp; Refunds</h2>
+        <h2>7. Returns, Exchanges, &amp; Refunds</h2>
         <p>
           All returns, exchanges, and refunds are governed strictly by our 
           <a href="/return-policy"> Return &amp; Refund Policy</a>. Please inspect your goods upon arrival and report 
@@ -114,7 +104,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>9. Limitation of Liability</h2>
+        <h2>8. Limitation of Liability</h2>
         <p>
           In no event shall {SITE.name}, its directors, officers, employees, or partners be liable for any indirect, 
           incidental, punitive, or consequential damages arising from your use of the website or products purchased 
@@ -123,7 +113,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>10. Governing Law</h2>
+        <h2>9. Governing Law</h2>
         <p>
           These Terms &amp; Conditions shall be governed by and construed in accordance with the laws of India. 
           Any disputes arising under or in connection with these terms shall be subject to the exclusive jurisdiction 
@@ -132,7 +122,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>11. Modifications to Terms</h2>
+        <h2>10. Modifications to Terms</h2>
         <p>
           We reserve the right, at our sole discretion, to update, change, or replace any part of these Terms &amp; 
           Conditions by posting updates and changes to our website. It is your responsibility to check our website 
@@ -142,7 +132,7 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>12. Contact Information</h2>
+        <h2>11. Contact Information</h2>
         <p>
           Questions about the Terms &amp; Conditions should be sent to us at:
           <br />

@@ -10,17 +10,17 @@ import { ADMIN_SESSION_KEY } from '../../../lib/admin-auth';
 import type { Order, OrderStatus } from '../../../types/order';
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending_prebook: 'Awaiting Prebook',
-  prebook_paid: 'Prebook Paid',
-  confirmed: 'Confirmed',
-  cancelled: 'Cancelled',
+  pending_prebook: 'Unpaid / Draft',
+  prebook_paid: 'Paid',
+  confirmed: 'Confirmed / Processing',
+  cancelled: 'Cancelled / Rejected',
 };
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending_prebook: 'bg-amber-100 text-amber-800',
-  prebook_paid: 'bg-blue-100 text-blue-800',
-  confirmed: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending_prebook: 'bg-amber-100 text-amber-800 border border-amber-200',
+  prebook_paid: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+  confirmed: 'bg-blue-100 text-blue-800 border border-blue-200',
+  cancelled: 'bg-red-100 text-red-800 border border-red-200',
 };
 
 export default function AdminOrdersPage() {
@@ -158,6 +158,7 @@ export default function AdminOrdersPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                       <div className="space-y-2">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-summitGoldDark">Customer</h3>
+                        <p><strong>Name:</strong> {order.customer.fullName}</p>
                         <p><strong>Phone:</strong> {order.customer.phone}</p>
                         <p><strong>Email:</strong> {order.customer.email}</p>
                         <p><strong>Address:</strong> {order.customer.address}</p>
@@ -165,10 +166,28 @@ export default function AdminOrdersPage() {
                         {order.customer.notes && <p><strong>Notes:</strong> {order.customer.notes}</p>}
                       </div>
                       <div className="space-y-2">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-summitGoldDark">Payment</h3>
-                        <p><strong>Order total:</strong> ₹{order.subtotal.toLocaleString('en-IN')}</p>
-                        <p><strong>Prebook ({SITE.prebookPercent}%):</strong> ₹{order.prebookAmount.toLocaleString('en-IN')}</p>
-                        <p><strong>Balance due:</strong> ₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</p>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-summitGoldDark">Payment Details</h3>
+                        <p><strong>Order Total:</strong> ₹{order.subtotal.toLocaleString('en-IN')}</p>
+                        <div className="border-t border-borderGray pt-2 mt-2 space-y-1 text-xs">
+                          {order.customer.payment ? (
+                            <>
+                              <p className="text-green-700 font-bold uppercase tracking-wider mb-1">✓ Razorpay Payment Verified</p>
+                              <p><strong>Payment ID:</strong> <code className="bg-cardGray px-1 select-all">{order.customer.payment.paymentId}</code></p>
+                              <p><strong>Order ID:</strong> <code className="bg-cardGray px-1 select-all">{order.customer.payment.orderId}</code></p>
+                              <p><strong>Method:</strong> {order.customer.payment.method || 'Online Checkout'}</p>
+                              {order.customer.payment.refund && (
+                                <div className="mt-2 p-2 bg-red-50 border border-red-200 text-red-800 space-y-0.5 rounded">
+                                  <p className="font-bold">✕ Full Refund Processed</p>
+                                  <p><strong>Refund ID:</strong> <code>{order.customer.payment.refund.refundId}</code></p>
+                                  <p><strong>Refunded At:</strong> {new Date(order.customer.payment.refund.createdAt).toLocaleString('en-IN')}</p>
+                                  <p><strong>Status:</strong> {order.customer.payment.refund.status}</p>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <p className="text-amber-700 font-bold uppercase tracking-wider">⚡ No Razorpay Payment Data (Unpaid / Manual)</p>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -187,25 +206,25 @@ export default function AdminOrdersPage() {
 
                     <div className="flex flex-wrap gap-3 pt-2">
                       <a
-                        href={waLink}
+                        href={`https://wa.me/${order.customer.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-[#25D366] text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-[#1fb855] transition-colors"
                       >
-                        Request Prebook on WhatsApp
+                        WhatsApp Customer
                       </a>
                       {order.status === 'pending_prebook' && (
                         <button
                           onClick={() => updateStatus(order.id, 'prebook_paid')}
-                          className="border-2 border-midnightNavy text-midnightNavy px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-midnightNavy hover:text-summitGold transition-colors"
+                          className="border border-midnightNavy bg-midnightNavy text-summitGold px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-midnightNavyLight hover:text-summitGold transition-colors"
                         >
-                          Mark Prebook Paid
+                          Mark Paid
                         </button>
                       )}
                       {order.status === 'prebook_paid' && (
                         <button
                           onClick={() => updateStatus(order.id, 'confirmed')}
-                          className="border-2 border-green-700 text-green-700 px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-green-700 hover:text-white transition-colors"
+                          className="border border-green-700 bg-green-700 text-white px-5 py-3 text-xs font-black uppercase tracking-widest hover:bg-green-800 transition-colors"
                         >
                           Confirm Order
                         </button>
@@ -213,9 +232,9 @@ export default function AdminOrdersPage() {
                       {order.status !== 'cancelled' && (
                         <button
                           onClick={() => updateStatus(order.id, 'cancelled')}
-                          className="text-red-600 px-5 py-3 text-xs font-bold uppercase tracking-widest hover:underline"
+                          className="text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 px-5 py-3 text-xs font-bold uppercase tracking-widest transition-colors"
                         >
-                          Cancel
+                          Cancel / Reject Order
                         </button>
                       )}
                     </div>
