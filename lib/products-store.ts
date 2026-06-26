@@ -9,6 +9,12 @@ import { logger } from './logger';
 
 const PRODUCTS_PATH = path.join(process.cwd(), 'data', 'products.json');
 
+function handleSupabaseError(error: any): never {
+  throw new Error(
+    `Supabase error [code: ${error.code || 'unknown'}]: ${error.message || 'No message'}. Details: ${error.details || 'None'}. Hint: ${error.hint || 'None'}`
+  );
+}
+
 export function slugify(name: string): string {
   return name
     .toLowerCase()
@@ -140,7 +146,7 @@ async function seedSupabaseIfEmpty(): Promise<void> {
   try {
     const count = await withRetry(async () => {
       const { count, error } = await supabase.from('products').select('*', { count: 'exact', head: true });
-      if (error) throw new Error(error.message);
+      if (error) handleSupabaseError(error);
       return count;
     });
 
@@ -150,7 +156,7 @@ async function seedSupabaseIfEmpty(): Promise<void> {
     const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct).map(productToRow);
     await withRetry(async () => {
       const { error } = await supabase.from('products').insert(seeded);
-      if (error) throw new Error(error.message);
+      if (error) handleSupabaseError(error);
     });
     logger.info('Supabase products table seeded successfully.');
   } catch (err) {
@@ -166,7 +172,7 @@ async function getAllProductsSupabase(): Promise<Product[]> {
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   return (data as ProductRow[]).map(rowToProduct);
@@ -176,10 +182,10 @@ async function getProductBySlugSupabase(slug: string): Promise<Product | null> {
   const supabase = getSupabase()!;
   return withRetry(async () => {
     const { data: bySlug, error: slugErr } = await supabase.from('products').select('*').eq('slug', slug).maybeSingle();
-    if (slugErr) throw new Error(slugErr.message);
+    if (slugErr) handleSupabaseError(slugErr);
     if (bySlug) return rowToProduct(bySlug as ProductRow);
     const { data: byId, error } = await supabase.from('products').select('*').eq('id', slug).maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return byId ? rowToProduct(byId as ProductRow) : null;
   });
 }
@@ -189,14 +195,14 @@ async function createProductSupabase(input: ProductInput): Promise<Product> {
   const product = inputToProduct(input);
   const existing = await withRetry(async () => {
     const { data, error } = await supabase.from('products').select('slug').eq('slug', product.slug).maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   if (existing) throw new Error('A product with this slug already exists.');
 
   await withRetry(async () => {
     const { error } = await supabase.from('products').insert(productToRow(product));
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
   });
   return product;
 }
@@ -214,14 +220,14 @@ async function updateProductSupabase(slug: string, input: ProductInput): Promise
       .eq('slug', product.slug)
       .neq('id', existing.id)
       .maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   if (duplicate) throw new Error('A product with this slug already exists.');
 
   await withRetry(async () => {
     const { error } = await supabase.from('products').update(productToRow(product)).eq('id', existing.id);
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
   });
   return product;
 }
@@ -232,7 +238,7 @@ async function deleteProductSupabase(slug: string): Promise<boolean> {
   if (!existing) return false;
   await withRetry(async () => {
     const { error } = await supabase.from('products').delete().eq('id', existing.id);
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
   });
   return true;
 }

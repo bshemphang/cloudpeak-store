@@ -44,7 +44,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; media-src 'self' * data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel-storage.com https://vitals.vercel-analytics.com;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; media-src 'self' * data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel-storage.com https://vitals.vercel-analytics.com https://api.razorpay.com; frame-src 'self' https://api.razorpay.com;",
           },
         ],
       },

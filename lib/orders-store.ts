@@ -7,6 +7,12 @@ import { logger } from './logger';
 
 const ORDERS_PATH = path.join(process.cwd(), 'data', 'orders.json');
 
+function handleSupabaseError(error: any): never {
+  throw new Error(
+    `Supabase error [code: ${error.code || 'unknown'}]: ${error.message || 'No message'}. Details: ${error.details || 'None'}. Hint: ${error.hint || 'None'}`
+  );
+}
+
 type OrderRow = {
   id: string;
   created_at: string;
@@ -69,7 +75,7 @@ async function getAllOrdersSupabase(): Promise<Order[]> {
   const supabase = getSupabase()!;
   const data = await withRetry(async () => {
     const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   return (data as OrderRow[]).map(rowToOrder);
@@ -79,7 +85,7 @@ async function getOrderByIdSupabase(id: string): Promise<Order | null> {
   const supabase = getSupabase()!;
   const data = await withRetry(async () => {
     const { data, error } = await supabase.from('orders').select('*').eq('id', id).maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   return data ? rowToOrder(data as OrderRow) : null;
@@ -89,7 +95,7 @@ async function saveOrderSupabase(order: Order): Promise<void> {
   const supabase = getSupabase()!;
   await withRetry(async () => {
     const { error } = await supabase.from('orders').insert(orderToRow(order));
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
   });
 }
 
@@ -102,7 +108,7 @@ async function updateOrderStatusSupabase(id: string, status: Order['status']): P
       .eq('id', id)
       .select()
       .maybeSingle();
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   return data ? rowToOrder(data as OrderRow) : null;
@@ -116,7 +122,7 @@ async function getOrdersByEmailSupabase(email: string): Promise<Order[]> {
       .select('*')
       .eq('customer->>email', email)
       .order('created_at', { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) handleSupabaseError(error);
     return data;
   });
   return (data as OrderRow[]).map(rowToOrder);

@@ -44,7 +44,7 @@ export default function OrderConfirmationPage() {
       <section className="bg-midnightNavy py-14 md:py-20 text-center px-4">
         <div className="text-4xl mb-4">✓</div>
         <h1 className="font-display text-4xl md:text-6xl text-summitGold uppercase tracking-wide mb-3">
-          Order Placed!
+          {order.status === 'prebook_paid' || order.status === 'confirmed' ? 'Order Confirmed!' : 'Order Placed!'}
         </h1>
         <p className="text-storeWhite/70 text-sm uppercase tracking-widest">
           Order ID: <span className="text-summitGold font-bold">{order.id}</span>
@@ -58,26 +58,47 @@ export default function OrderConfirmationPage() {
           <h2 className="font-display text-xl text-midnightNavy uppercase tracking-wide text-center mb-2">
             What Happens Next?
           </h2>
-          <ol className="space-y-4 text-sm text-midnightNavy/75 leading-relaxed list-decimal pl-5">
-            <li>
-              Our team has received your order and will review it shortly.
-            </li>
-            <li>
-              We&apos;ll contact you on WhatsApp at{' '}
-              <strong className="text-midnightNavy">{order.customer.phone}</strong> to collect the
-              prebook amount of{' '}
-              <strong className="text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>{' '}
-              ({SITE.prebookPercent}% of your order total).
-            </li>
-            <li>
-              Once prebook is paid, your items are reserved and we&apos;ll confirm dispatch details.
-            </li>
-            <li>
-              Remaining balance of{' '}
-              <strong>₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</strong>{' '}
-              is due before shipping.
-            </li>
-          </ol>
+          {order.status === 'prebook_paid' || order.status === 'confirmed' ? (
+            <ol className="space-y-4 text-sm text-midnightNavy/75 leading-relaxed list-decimal pl-5">
+              <li>
+                Our team has verified your prebook payment of{' '}
+                <strong className="text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>.
+              </li>
+              <li>
+                Your order is confirmed and your items are now reserved!
+              </li>
+              <li>
+                We will contact you on WhatsApp at{' '}
+                <strong className="text-midnightNavy">{order.customer.phone}</strong> to confirm your dispatch details.
+              </li>
+              <li>
+                The remaining balance of{' '}
+                <strong>₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</strong>{' '}
+                is due before shipping.
+              </li>
+            </ol>
+          ) : (
+            <ol className="space-y-4 text-sm text-midnightNavy/75 leading-relaxed list-decimal pl-5">
+              <li>
+                Our team has received your order and will review it shortly.
+              </li>
+              <li>
+                We&apos;ll contact you on WhatsApp at{' '}
+                <strong className="text-midnightNavy">{order.customer.phone}</strong> to collect the
+                prebook amount of{' '}
+                <strong className="text-summitGoldDark">₹{order.prebookAmount.toLocaleString('en-IN')}</strong>{' '}
+                ({SITE.prebookPercent}% of your order total).
+              </li>
+              <li>
+                Once prebook is paid, your items are reserved and we&apos;ll confirm dispatch details.
+              </li>
+              <li>
+                Remaining balance of{' '}
+                <strong>₹{(order.subtotal - order.prebookAmount).toLocaleString('en-IN')}</strong>{' '}
+                is due before shipping.
+              </li>
+            </ol>
+          )}
         </div>
 
         <div className="text-sm text-midnightNavy/60 space-y-1">

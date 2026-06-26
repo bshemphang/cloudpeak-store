@@ -11,6 +11,7 @@ import { SITE } from '../../lib/site';
 import { calculatePrebookAmount } from '../../lib/order-utils';
 import type { CustomerDetails } from '../../types/order';
 import { generateOrderFallbackMessage, getWhatsAppLink } from '../../lib/whatsapp';
+import Script from 'next/script';
 
 const emptyCustomer: CustomerDetails = {
   fullName: '',
@@ -21,6 +22,29 @@ const emptyCustomer: CustomerDetails = {
   state: '',
   pincode: '',
   notes: '',
+};
+
+const loadRazorpayScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve(false);
+      return;
+    }
+    if ((window as any).Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
 };
 
 export default function CheckoutPage() {
@@ -67,7 +91,10 @@ export default function CheckoutPage() {
     setShowWhatsAppFallback(false);
     setLoading(true);
 
+    let dbOrderData: any = null;
+
     try {
+      // 1. Create the order in the local database/store
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,19 +107,116 @@ export default function CheckoutPage() {
         }),
       });
 
-      const data = await res.json();
+      dbOrderData = await res.json();
       if (!res.ok) {
-        setError(data.error ?? 'Something went wrong. Please try again.');
+        setError(dbOrderData.error ?? 'Something went wrong. Please try again.');
         setShowWhatsAppFallback(true);
+        setLoading(false);
+        return;
+      }
+    } catch {
+      setError('Network error creating order. Please check your connection.');
+      setShowWhatsAppFallback(true);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // 2. Create Razorpay order on the backend
+      const rzpOrderRes = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: dbOrderData.order.prebookAmount * 100, // Amount in paise (e.g. ₹299 = 29900 paise)
+          currency: 'INR',
+          receipt: dbOrderData.order.id,
+        }),
+      });
+
+      const rzpOrderData = await rzpOrderRes.json();
+      if (!rzpOrderRes.ok) {
+        setError(rzpOrderData.error ?? 'Failed to initialize Razorpay checkout.');
+        setLoading(false);
         return;
       }
 
-      clearCart();
-      router.push(`/order-confirmation/${data.order.id}`);
-    } catch {
-      setError('Network error. Please check your connection and try again.');
-      setShowWhatsAppFallback(true);
-    } finally {
+      // Ensure Razorpay SDK is fully loaded
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded) {
+        setError('Failed to load Razorpay payment gateway. Please check your network connection.');
+        setLoading(false);
+        return;
+      }
+
+      // 3. Configure and open Razorpay modal
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        setError('Client configuration error: Razorpay Key ID is not set.');
+        setLoading(false);
+        return;
+      }
+
+      const options = {
+        key: keyId,
+        amount: rzpOrderData.amount,
+        currency: rzpOrderData.currency,
+        name: SITE.name,
+        description: `Prebook payment for order ${dbOrderData.order.id}`,
+        image: SITE.logo,
+        order_id: rzpOrderData.order_id,
+        handler: async function (response: any) {
+          setLoading(true);
+          try {
+            // 4. Verify payment signature on the backend
+            const verifyRes = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                db_order_id: dbOrderData.order.id,
+              }),
+            });
+
+            const verifyResult = await verifyRes.json();
+            if (!verifyRes.ok) {
+              setError(verifyResult.error ?? 'Payment verification failed.');
+              setLoading(false);
+              return;
+            }
+
+            clearCart();
+            router.push(`/order-confirmation/${dbOrderData.order.id}`);
+          } catch {
+            setError('Payment verification failed due to network error. Please contact support.');
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: customer.fullName,
+          email: customer.email,
+          contact: customer.phone,
+        },
+        theme: {
+          color: '#0D1B2A',
+        },
+        modal: {
+          ondismiss: function () {
+            setError('Payment window was closed by the user.');
+            setLoading(false);
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (resp: any) {
+        setError(resp.error.description || 'Payment failed. Please try again.');
+        setLoading(false);
+      });
+      rzp.open();
+    } catch (err: any) {
+      setError(err?.message || 'Checkout failed. Please try again.');
       setLoading(false);
     }
   };
@@ -261,7 +385,7 @@ export default function CheckoutPage() {
             disabled={loading}
             className="w-full bg-midnightNavy text-summitGold py-4 text-sm font-black uppercase tracking-widest hover:bg-midnightNavyLight transition-colors disabled:opacity-50"
           >
-            {loading ? 'Placing Order...' : 'Place Order'}
+            {loading ? 'Processing...' : 'Pay Prebook & Place Order'}
           </button>
 
           <p className="text-xs text-midnightNavy/50 leading-relaxed">
@@ -304,12 +428,12 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mt-4 p-4 bg-midnightNavy/5 border border-summitGold/20 text-xs text-midnightNavy/70 leading-relaxed">
-              After placing your order, our team will contact you on WhatsApp to collect the prebook
-              amount of <strong>₹{prebookAmount.toLocaleString('en-IN')}</strong> and confirm your booking.
+              You will pay the prebook amount of <strong>₹{prebookAmount.toLocaleString('en-IN')}</strong> securely online via Razorpay. The remaining balance is due before dispatch.
             </div>
           </div>
         </aside>
       </div>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
     </div>
   );
 }
