@@ -20,14 +20,17 @@ export function normalizeProductInput(input: ProductInput): ProductInput {
     colors,
     images,
     sizes: input.sizes.filter(Boolean),
+    sizePrices: input.sizePrices ?? {},
   };
 }
 
 export function normalizeProduct(product: Product): Product {
+  const sizePrices = product.sizePrices ?? {};
   if (product.colors?.length > 0) {
     return {
       ...product,
       images: product.colors[0].images.length ? product.colors[0].images : product.images,
+      sizePrices,
     };
   }
   const images = product.images?.length ? product.images : [IMAGE_FALLBACK];
@@ -35,6 +38,7 @@ export function normalizeProduct(product: Product): Product {
     ...product,
     colors: [{ name: 'Default', hex: '#0A1628', images }],
     images,
+    sizePrices,
   };
 }
 

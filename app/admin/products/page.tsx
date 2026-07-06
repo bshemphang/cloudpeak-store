@@ -21,6 +21,7 @@ const emptyForm: ProductInput = {
   details: '',
   sizes: ['S', 'M', 'L', 'XL'],
   buyLink: '',
+  sizePrices: {},
 };
 
 function formFromProduct(p: Product): ProductInput {
@@ -39,6 +40,7 @@ function formFromProduct(p: Product): ProductInput {
     details: p.details,
     sizes: p.sizes,
     buyLink: p.buyLink ?? '',
+    sizePrices: p.sizePrices ?? {},
     slug: p.slug,
   };
 }
@@ -173,8 +175,8 @@ export default function AdminProductsPage() {
 
   return (
     <AdminShell
-      title="Products"
-      subtitle={`${products.length} items in your catalogue`}
+      title="Upload Design"
+      subtitle={`${products.length} designs in your catalogue`}
       storageMode={storageMode}
       onLogout={logout}
       actions={
@@ -184,7 +186,7 @@ export default function AdminProductsPage() {
             onClick={() => { setShowForm(true); setForm(emptyForm); setEditingSlug(null); }}
             className="bg-midnightNavy text-summitGold px-5 py-2.5 text-xs font-black uppercase tracking-widest hover:bg-midnightNavyLight rounded-lg transition-colors"
           >
-            + Add Product
+            + Upload Design
           </button>
         ) : null
       }
@@ -216,7 +218,7 @@ export default function AdminProductsPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
+              placeholder="Search designs..."
               className="field-input max-w-sm"
             />
           )}
@@ -224,7 +226,7 @@ export default function AdminProductsPage() {
           {filtered.length === 0 ? (
             <div className="bg-storeWhite rounded-2xl border border-borderGray p-12 text-center">
               <p className="text-midnightNavy/50 font-bold uppercase tracking-widest text-sm">
-                {search ? 'No products match your search.' : 'No products yet. Add your first drop.'}
+                {search ? 'No designs match your search.' : "No designs uploaded yet. Click '+ Upload Design' to get started."}
               </p>
             </div>
           ) : (

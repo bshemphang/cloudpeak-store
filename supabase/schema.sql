@@ -57,3 +57,8 @@ create policy "Users can insert their own profile." on profiles
 create policy "Users can update their own profile." on profiles
   for update using (auth.uid() = id);
 
+
+-- Alter products table to support size-specific pricing
+alter table products add column if not exists size_prices jsonb not null default '{}';
+
+

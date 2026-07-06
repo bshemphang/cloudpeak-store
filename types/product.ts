@@ -27,6 +27,7 @@ export type Product = {
   details: string;
   sizes: string[];
   buyLink?: string;
+  sizePrices?: Record<string, number>;
   createdAt: string;
   updatedAt: string;
 };

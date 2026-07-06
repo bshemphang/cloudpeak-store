@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import type { ProductColor } from '../../types/product';
 
 type ColorVariantEditorProps = {
@@ -8,6 +9,11 @@ type ColorVariantEditorProps = {
 };
 
 export default function ColorVariantEditor({ colors, onChange }: ColorVariantEditorProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeColorIndex, setActiveColorIndex] = useState<number | null>(null);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState('');
+
   const updateColor = (index: number, patch: Partial<ProductColor>) => {
     onChange(colors.map((c, i) => (i === index ? { ...c, ...patch } : c)));
   };
@@ -21,12 +27,72 @@ export default function ColorVariantEditor({ colors, onChange }: ColorVariantEdi
     onChange(colors.filter((_, i) => i !== index));
   };
 
+  const triggerUpload = (index: number) => {
+    setActiveColorIndex(index);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (activeColorIndex === null || !e.target.files || e.target.files.length === 0) return;
+    
+    const index = activeColorIndex;
+    const files = e.target.files;
+    setUploadingIndex(index);
+    setUploadError('');
+
+    try {
+      const uploadedUrls: string[] = [];
+      const adminPwd = sessionStorage.getItem('cloudpeak-admin-pwd') ?? '';
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          headers: {
+            'x-admin-password': adminPwd,
+          },
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error ?? 'Upload failed.');
+        }
+
+        const data = await res.json();
+        uploadedUrls.push(data.url);
+      }
+
+      const color = colors[index];
+      const existingImages = color.images.filter(Boolean);
+      updateColor(index, {
+        images: [...existingImages, ...uploadedUrls]
+      });
+    } catch (err: any) {
+      setUploadError(err.message ?? 'Upload failed');
+    } finally {
+      setUploadingIndex(null);
+      setActiveColorIndex(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveImage = (colorIndex: number, imgIndex: number) => {
+    const color = colors[colorIndex];
+    updateColor(colorIndex, {
+      images: color.images.filter((_, idx) => idx !== imgIndex)
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-midnightNavy">Color Variants</h3>
-          <p className="text-xs text-midnightNavy/50 mt-0.5">Each color has its own gallery angles</p>
+          <h3 className="text-sm font-bold text-midnightNavy">Color & Design Variants</h3>
+          <p className="text-xs text-midnightNavy/50 mt-0.5">Add colorways and upload custom mockups</p>
         </div>
         <button
           type="button"
@@ -67,37 +133,77 @@ export default function ColorVariantEditor({ colors, onChange }: ColorVariantEdi
             )}
           </div>
 
-          <div>
-            <label className="field-label">Images for this color (one URL per line)</label>
+          <div className="space-y-2">
+            <label className="field-label">Variant Media (Upload from desktop or mobile)</label>
+            
+            <button
+              type="button"
+              onClick={() => triggerUpload(ci)}
+              disabled={uploadingIndex !== null}
+              className="w-full flex items-center justify-center gap-2 bg-midnightNavy text-summitGold py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg shadow-sm hover:bg-midnightNavyLight transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {uploadingIndex === ci ? (
+                <>
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-summitGold border-t-transparent animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <span>📤 Upload images from mobile / desktop</span>
+              )}
+            </button>
+            
+            {uploadError && activeColorIndex === ci && (
+              <p className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded">{uploadError}</p>
+            )}
+
             <textarea
-              rows={3}
-              value={color.images.join('\n')}
+              rows={2}
+              value={color.images.filter(Boolean).join('\n')}
               onChange={(e) =>
                 updateColor(ci, { images: e.target.value.split('\n') })
               }
-              className="field-input resize-none font-mono text-xs"
-              placeholder="Front view URL&#10;Side view URL&#10;Back view URL"
+              className="field-input resize-none font-mono text-[10px]"
+              placeholder="Or paste image URLs (one per line)..."
             />
           </div>
 
           {color.images.filter(Boolean).length > 0 && (
             <div className="flex gap-2 overflow-x-auto pb-1">
               {color.images.filter(Boolean).map((url, ii) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={`${url}-${ii}`}
-                  src={url}
-                  alt=""
-                  className="w-14 h-16 object-cover rounded border border-borderGray shrink-0"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.opacity = '0.3';
-                  }}
-                />
+                <div key={`${url}-${ii}`} className="relative shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt=""
+                    className="w-14 h-16 object-cover rounded border border-borderGray"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.opacity = '0.3';
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(ci, ii)}
+                    className="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold shadow-md hover:bg-red-700"
+                    title="Remove variant image"
+                  >
+                    ✕
+                  </button>
+                </div>
               ))}
             </div>
           )}
         </div>
       ))}
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        multiple
+        className="hidden"
+      />
     </div>
   );
 }
+

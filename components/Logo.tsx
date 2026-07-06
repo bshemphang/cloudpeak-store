@@ -8,13 +8,13 @@ type LogoProps = {
 const imageStyles = {
   navbar: 'h-8 md:h-10',
   footer: 'h-8',
-  plain: 'h-12',
+  plain: 'h-8 md:h-9',
 };
 
 const textStyles = {
   navbar: 'text-lg md:text-xl tracking-[0.15em]',
   footer: 'text-xl md:text-2xl tracking-[0.2em]',
-  plain: 'text-2xl md:text-3xl tracking-[0.25em]',
+  plain: 'text-lg md:text-xl tracking-[0.1em]',
 };
 
 export default function Logo({ variant = 'navbar', className = '' }: LogoProps) {

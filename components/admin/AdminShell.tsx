@@ -41,25 +41,16 @@ const AnalyticsIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v16m-6 0a2 2 0 002 2h2a2 2 0 002-2" />
   </svg>
 );
-
-const EmailIcon = () => (
+const UploadIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
   </svg>
 );
 
-const ChevronIcon = ({ open }: { open: boolean }) => (
-  <svg className={`w-4 h-4 transition-transform ${open ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-  </svg>
-);
-
-type SubItem = { href: string; label: string };
 type NavItem = {
   href: string;
   label: string;
   icon: ReactNode;
-  subItems?: SubItem[];
 };
 
 type AdminShellProps = {
@@ -75,64 +66,12 @@ export default function AdminShell({ title, subtitle, storageMode, children, act
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // States to control collapsible menus
-  const [productsOpen, setProductsOpen] = useState(true);
-  const [ordersOpen, setOrdersOpen] = useState(true);
-  const [analyticsOpen, setAnalyticsOpen] = useState(true);
-
   const navItems: NavItem[] = [
-    { href: '/admin/analytics', label: 'Home', icon: <HomeIcon /> },
-    {
-      href: '/admin/orders',
-      label: 'Orders',
-      icon: <OrdersIcon />,
-      subItems: [
-        { href: '/admin/orders', label: 'All Orders' },
-        { href: '/admin/orders?filter=pending', label: 'Drafts' },
-        { href: '/admin/orders?filter=paid', label: 'Abandoned checkouts' }
-      ]
-    },
-    {
-      href: '/admin/products',
-      label: 'Products',
-      icon: <ProductsIcon />,
-      subItems: [
-        { href: '/admin/products', label: 'Collections' },
-        { href: '/admin/products?tab=inventory', label: 'Inventory' },
-      ]
-    },
-    { href: '/admin/customers', label: 'Customers', icon: <CustomersIcon /> },
-    { href: '/admin/emails', label: 'Email Outbox', icon: <EmailIcon /> },
-    {
-      href: '/admin/analytics',
-      label: 'Analytics',
-      icon: <AnalyticsIcon />,
-      subItems: [
-        { href: '/admin/analytics', label: 'Reports' },
-        { href: '/admin/analytics/live-view', label: 'Live View' }
-      ]
-    }
+    { href: '/admin/analytics', label: 'Sales & Analytics', icon: <AnalyticsIcon /> },
+    { href: '/admin/orders', label: 'Orders & Payments', icon: <OrdersIcon /> },
+    { href: '/admin/customers', label: 'User Details', icon: <CustomersIcon /> },
+    { href: '/admin/products', label: 'Upload Design', icon: <UploadIcon /> },
   ];
-
-  const handleSubToggle = (label: string, e: React.MouseEvent) => {
-    if (label === 'Products') {
-      e.preventDefault();
-      setProductsOpen(!productsOpen);
-    } else if (label === 'Orders') {
-      e.preventDefault();
-      setOrdersOpen(!ordersOpen);
-    } else if (label === 'Analytics') {
-      e.preventDefault();
-      setAnalyticsOpen(!analyticsOpen);
-    }
-  };
-
-  const isSubOpen = (label: string) => {
-    if (label === 'Products') return productsOpen;
-    if (label === 'Orders') return ordersOpen;
-    if (label === 'Analytics') return analyticsOpen;
-    return false;
-  };
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-[#1e1e1e] text-gray-300">
@@ -145,59 +84,24 @@ export default function AdminShell({ title, subtitle, storageMode, children, act
 
       <nav className="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-thin">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.subItems && pathname.startsWith(item.href) && !pathname.endsWith('live-view'));
-          const hasSubs = !!item.subItems;
-          const open = isSubOpen(item.label);
+          const isActive = pathname.startsWith(item.href);
 
           return (
             <div key={item.label} className="space-y-1">
-              {hasSubs ? (
-                <button
-                  onClick={(e) => handleSubToggle(item.label, e)}
-                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:bg-white/5 hover:text-white ${
-                    isActive ? 'bg-white/5 text-summitGold' : 'text-gray-400'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={isActive ? 'text-summitGold' : 'text-gray-400'}>{item.icon}</span>
-                    <span>{item.label}</span>
-                  </div>
-                  <ChevronIcon open={open} />
-                </button>
-              ) : (
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:bg-white/5 hover:text-white ${
-                    isActive ? 'bg-summitGold text-midnightNavy' : 'text-gray-400'
-                  }`}
-                >
-                  <span className={isActive ? 'text-midnightNavy' : 'text-gray-400'}>{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              )}
-
-              {hasSubs && open && item.subItems && (
-                <div className="pl-9 space-y-1">
-                  {item.subItems.map((sub) => {
-                    const isSubActive = pathname === sub.href;
-                    return (
-                      <Link
-                        key={sub.label}
-                        href={sub.href}
-                        className={`block py-1.5 text-[11px] font-medium tracking-wide transition-all hover:text-white ${
-                          isSubActive ? 'text-summitGold font-bold' : 'text-gray-400/80'
-                        }`}
-                      >
-                        {sub.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+              <Link
+                href={item.href}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:bg-white/5 hover:text-white ${
+                  isActive ? 'bg-summitGold text-midnightNavy' : 'text-gray-400'
+                }`}
+              >
+                <span className={isActive ? 'text-midnightNavy' : 'text-gray-400'}>{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
             </div>
           );
         })}
       </nav>
+
 
       <div className="p-4 border-t border-white/5 space-y-3 bg-[#181818]">
         {storageMode && (

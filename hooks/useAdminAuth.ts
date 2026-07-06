@@ -10,7 +10,12 @@ export function useAdminAuth() {
     }
     return '';
   });
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return Boolean(sessionStorage.getItem(ADMIN_SESSION_KEY));
+    }
+    return false;
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

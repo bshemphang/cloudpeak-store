@@ -6,7 +6,7 @@ import AdminLogin from '../../../components/admin/AdminLogin';
 import AdminShell from '../../../components/admin/AdminShell';
 import { getCustomerPrebookWhatsAppLink } from '../../../lib/whatsapp';
 import { SITE } from '../../../lib/site';
-import { ADMIN_SESSION_KEY } from '../../../lib/admin-auth';
+import { useAdminAuth } from '../../../hooks/useAdminAuth';
 import type { Order, OrderStatus } from '../../../types/order';
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
@@ -24,17 +24,17 @@ const STATUS_COLORS: Record<OrderStatus, string> = {
 };
 
 export default function AdminOrdersPage() {
-  const [password, setPassword] = useState('');
-  const [authenticated, setAuthenticated] = useState(false);
+  const { password, setPassword, authenticated, loading: authLoading, error: authError, login, getPassword, logout } = useAdminAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [storageMode, setStorageMode] = useState<'supabase' | 'file'>('file');
 
-  const fetchOrders = useCallback(async (pwd: string) => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError('');
+    const pwd = getPassword();
     try {
       const res = await fetch('/api/orders', {
         headers: { 'x-admin-password': pwd },
@@ -42,12 +42,9 @@ export default function AdminOrdersPage() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? 'Failed to load orders');
-        setAuthenticated(false);
         return;
       }
       setOrders(data.orders);
-      setAuthenticated(true);
-      sessionStorage.setItem(ADMIN_SESSION_KEY, pwd);
       const statusRes = await fetch('/api/admin/status', { headers: { 'x-admin-password': pwd } });
       if (statusRes.ok) {
         const statusData = await statusRes.json();
@@ -58,23 +55,21 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getPassword]);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(ADMIN_SESSION_KEY);
-    if (saved) {
-      setPassword(saved);
-      fetchOrders(saved);
+    if (authenticated) {
+      fetchOrders();
     }
-  }, [fetchOrders]);
+  }, [authenticated, fetchOrders]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    fetchOrders(password);
+    await login(password);
   };
 
   const updateStatus = async (orderId: string, status: OrderStatus) => {
-    const pwd = sessionStorage.getItem(ADMIN_SESSION_KEY);
+    const pwd = getPassword();
     if (!pwd) return;
 
     const res = await fetch(`/api/orders/${orderId}`, {
@@ -98,18 +93,12 @@ export default function AdminOrdersPage() {
         password={password}
         setPassword={setPassword}
         onSubmit={handleLogin}
-        loading={loading}
-        error={error}
+        loading={authLoading || loading}
+        error={authError || error}
         title="Orders Admin"
       />
     );
   }
-
-  const logout = () => {
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
-    setAuthenticated(false);
-    setPassword('');
-  };
 
   return (
     <AdminShell

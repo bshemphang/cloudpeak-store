@@ -1,15 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext';
-import { generateOrderMessage, getWhatsAppLink } from '../lib/whatsapp';
 import SafeImage from './SafeImage';
 
 export default function CartSidebar() {
   const { isCartOpen, closeCart, cart, removeFromCart, updateQuantity, cartTotal } = useCart();
 
   if (!isCartOpen) return null;
-
-  const waLink = getWhatsAppLink(generateOrderMessage(cart, cartTotal));
 
   return (
     <>
@@ -92,17 +89,6 @@ export default function CartSidebar() {
           >
             Proceed to Checkout
           </Link>
-
-          {cart.length > 0 && (
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 border-2 border-[#25D366] text-[#25D366] py-3 text-xs font-black uppercase tracking-widest hover:bg-[#25D366] hover:text-white transition-colors"
-            >
-              Quick Order via WhatsApp
-            </a>
-          )}
         </div>
       </div>
     </>

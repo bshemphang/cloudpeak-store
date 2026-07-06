@@ -41,6 +41,7 @@ type ProductRow = {
   details: string;
   sizes: string[];
   buy_link: string | null;
+  size_prices?: Record<string, number>;
   created_at: string;
   updated_at: string;
 };
@@ -60,6 +61,7 @@ function rowToProduct(row: ProductRow): Product {
     details: row.details,
     sizes: row.sizes ?? [],
     buyLink: row.buy_link ?? undefined,
+    sizePrices: row.size_prices ?? {},
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   });
@@ -81,6 +83,7 @@ function productToRow(product: Product): ProductRow {
     details: normalized.details,
     sizes: normalized.sizes,
     buy_link: normalized.buyLink ?? null,
+    size_prices: normalized.sizePrices ?? {},
     created_at: normalized.createdAt,
     updated_at: normalized.updatedAt,
   };
@@ -103,6 +106,7 @@ function inputToProduct(input: ProductInput, existing?: Product): Product {
     details: normalized.details.trim(),
     sizes: normalized.sizes,
     buyLink: normalized.buyLink?.trim() || undefined,
+    sizePrices: normalized.sizePrices ?? {},
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   });
@@ -114,18 +118,11 @@ async function readFileProducts(): Promise<Product[]> {
   try {
     const raw = await fs.readFile(PRODUCTS_PATH, 'utf-8');
     const parsed = JSON.parse(raw) as Product[];
-    if (parsed.length > 0) return parsed.map(normalizeProduct);
+    if (parsed && parsed.length > 0) return parsed.map(normalizeProduct);
   } catch {
-    // seed below
+    // Return empty array if file does not exist or fails to parse
   }
-  const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct);
-  try {
-    await fs.mkdir(path.dirname(PRODUCTS_PATH), { recursive: true });
-    await fs.writeFile(PRODUCTS_PATH, JSON.stringify(seeded, null, 2), 'utf-8');
-  } catch (e) {
-    console.error('Failed to write mock products database file:', e);
-  }
-  return seeded;
+  return [];
 }
 
 async function writeFileProducts(products: Product[]): Promise<void> {
@@ -139,34 +136,8 @@ async function writeFileProducts(products: Product[]): Promise<void> {
 
 // ─── Supabase storage (production / Vercel) ───
 
-async function seedSupabaseIfEmpty(): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) return;
-
-  try {
-    const count = await withRetry(async () => {
-      const { count, error } = await supabase.from('products').select('*', { count: 'exact', head: true });
-      if (error) handleSupabaseError(error);
-      return count;
-    });
-
-    if (count !== null && count > 0) return;
-
-    logger.info('Supabase products table is empty. Seeding products...');
-    const seeded = (SEED_PRODUCTS as Product[]).map(normalizeProduct).map(productToRow);
-    await withRetry(async () => {
-      const { error } = await supabase.from('products').insert(seeded);
-      if (error) handleSupabaseError(error);
-    });
-    logger.info('Supabase products table seeded successfully.');
-  } catch (err) {
-    logger.error('Failed to seed Supabase database.', err);
-  }
-}
-
 async function getAllProductsSupabase(): Promise<Product[]> {
   const supabase = getSupabase()!;
-  await seedSupabaseIfEmpty();
   const data = await withRetry(async () => {
     const { data, error } = await supabase
       .from('products')

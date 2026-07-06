@@ -18,6 +18,15 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] ?? 'One Size');
   const [error, setError] = useState('');
 
+  const normalized = normalizeProduct(product);
+
+  const getDisplayPrice = () => {
+    if (normalized.sizePrices && normalized.sizePrices[selectedSize]) {
+      return normalized.sizePrices[selectedSize];
+    }
+    return normalized.price;
+  };
+
   const handleAddToCart = () => {
     if (!product) return;
     if (!selectedSize) {
@@ -29,14 +38,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     addToCart({
       productId: product.id,
       name: product.name,
-      price: product.price,
+      price: getDisplayPrice(),
       image: getProductPrimaryImage(product, colorIndex),
       size: selectedSize,
       color: color?.name ?? 'Default',
     });
   };
 
-  const normalized = normalizeProduct(product);
   const activeColor = normalized.colors[colorIndex] ?? normalized.colors[0];
   const galleryImages = getColorImages(normalized, colorIndex);
   const detailLines = normalized.details.split('\n').filter(Boolean);
@@ -66,7 +74,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               {normalized.name}
             </h1>
             <p className="text-2xl font-bold text-summitGoldDark mb-6">
-              ₹{normalized.price.toLocaleString('en-IN')}
+              ₹{getDisplayPrice().toLocaleString('en-IN')}
             </p>
 
             <p className="text-sm text-midnightNavy/75 leading-relaxed mb-8">{normalized.description}</p>

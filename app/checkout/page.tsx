@@ -10,7 +10,6 @@ import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import { SITE } from '../../lib/site';
 import { calculatePrebookAmount } from '../../lib/order-utils';
 import type { CustomerDetails } from '../../types/order';
-import { generateOrderFallbackMessage, getWhatsAppLink } from '../../lib/whatsapp';
 import Script from 'next/script';
 
 const emptyCustomer: CustomerDetails = {
@@ -54,7 +53,6 @@ export default function CheckoutPage() {
   const [customer, setCustomer] = useState<CustomerDetails>(emptyCustomer);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showWhatsAppFallback, setShowWhatsAppFallback] = useState(false);
 
   const prebookAmount = calculatePrebookAmount(cartTotal);
 
@@ -82,14 +80,33 @@ export default function CheckoutPage() {
   if (cart.length === 0) return null;
 
   const handleChange = (field: keyof CustomerDetails, value: string) => {
-    setCustomer((prev) => ({ ...prev, [field]: value }));
+    let cleanValue = value;
+    if (field === 'phone') {
+      cleanValue = value.replace(/\D/g, '').slice(0, 10);
+    } else if (field === 'pincode') {
+      cleanValue = value.replace(/\D/g, '').slice(0, 6);
+    }
+    setCustomer((prev) => ({ ...prev, [field]: cleanValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setShowWhatsAppFallback(false);
     setLoading(true);
+
+    // Validate phone number (must be exactly 10 digits)
+    if (!/^\d{10}$/.test(customer.phone)) {
+      setError('Please enter a valid 10-digit mobile number.');
+      setLoading(false);
+      return;
+    }
+
+    // Validate pincode (must be exactly 6 digits)
+    if (!/^\d{6}$/.test(customer.pincode)) {
+      setError('Please enter a valid 6-digit PIN code.');
+      setLoading(false);
+      return;
+    }
 
     let dbOrderData: any = null;
 
@@ -110,13 +127,11 @@ export default function CheckoutPage() {
       dbOrderData = await res.json();
       if (!res.ok) {
         setError(dbOrderData.error ?? 'Something went wrong. Please try again.');
-        setShowWhatsAppFallback(true);
         setLoading(false);
         return;
       }
     } catch {
       setError('Network error creating order. Please check your connection.');
-      setShowWhatsAppFallback(true);
       setLoading(false);
       return;
     }
@@ -359,24 +374,6 @@ export default function CheckoutPage() {
               <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-200 px-4 py-3">
                 {error}
               </p>
-              {showWhatsAppFallback && (
-                <div className="bg-summitGold/10 border border-summitGold/30 p-4 space-y-3 text-left">
-                  <p className="text-xs font-bold uppercase tracking-wider text-summitGoldDark flex items-center gap-1.5">
-                    ⚠️ Connection Issue Detected
-                  </p>
-                  <p className="text-xs text-midnightNavy/85 leading-relaxed font-medium">
-                    It looks like the server is temporarily unreachable. Don&apos;t worry — you can submit your order details directly to our team via WhatsApp to instantly secure your booking!
-                  </p>
-                  <a
-                    href={getWhatsAppLink(generateOrderFallbackMessage(cart, cartTotal, customer))}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 text-center bg-[#25D366] text-white font-bold uppercase tracking-widest text-xs px-6 py-3.5 hover:bg-[#1fb855] transition-colors"
-                  >
-                    Place Order via WhatsApp ↗
-                  </a>
-                </div>
-              )}
             </div>
           )}
 
