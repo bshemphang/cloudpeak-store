@@ -6,7 +6,7 @@ create table if not exists products (
   slug text unique not null,
   name text not null,
   price numeric not null default 0,
-  category text not null default 'Streetwear',
+  category text not null default 'Men',
   is_new boolean not null default false,
   in_stock boolean not null default true,
   images jsonb not null default '[]',

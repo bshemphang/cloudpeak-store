@@ -12,7 +12,7 @@ import type { Product, ProductInput } from '../../../types/product';
 const emptyForm: ProductInput = {
   name: '',
   price: 0,
-  category: 'Streetwear',
+  category: 'Men',
   isNew: false,
   inStock: true,
   images: [],

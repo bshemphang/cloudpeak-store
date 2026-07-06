@@ -1,8 +1,7 @@
 export const PRODUCT_CATEGORIES = [
-  'Footwear',
-  'Streetwear',
-  'POD Exclusives',
-  'Accessories',
+  'Men',
+  'Women',
+  'Kids',
 ] as const;
 
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];

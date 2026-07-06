@@ -39,10 +39,9 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const collectionCategories = [
-    { title: 'Hoodies', img: categoryImages.hoodies, large: true },
-    { title: 'Accessories', img: categoryImages.accessories, large: false },
-    { title: 'Hats', img: categoryImages.hats, large: false },
-    { title: 'Jackets', img: categoryImages.jackets, large: false },
+    { title: "Men's Collection", img: categoryImages.men, category: 'Men' },
+    { title: "Women's Collection", img: categoryImages.women, category: 'Women' },
+    { title: "Kids' Collection", img: categoryImages.kids, category: 'Kids' },
   ];
 
   const organizationSchema = {
@@ -143,46 +142,69 @@ export default function Home() {
       <ScrollReveal>
         <section className="py-4 bg-midnightNavy">
           <div className="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-4 h-auto md:h-[600px]">
+            {/* Men (Left Column, Full Height) */}
             <div className="relative bg-midnightNavyLight group overflow-hidden flex items-center justify-center min-h-[350px] md:min-h-full">
               <SafeImage
                 src={collectionCategories[0].img}
-                alt="Hoodies"
+                alt={collectionCategories[0].title}
                 className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
               <div className="relative z-10 text-center">
-                <h2 className="font-display text-4xl md:text-6xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">Hoodies</h2>
-                <Link href="/shop" className="bg-summitGold text-midnightNavy px-8 py-3 text-xs font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg">See Collection</Link>
+                <h2 className="font-display text-4xl md:text-6xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">
+                  {collectionCategories[0].title}
+                </h2>
+                <Link
+                  href={`/shop?category=${collectionCategories[0].category}`}
+                  className="bg-summitGold text-midnightNavy px-8 py-3 text-xs font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg"
+                >
+                  See Collection
+                </Link>
               </div>
             </div>
+
+            {/* Right Column (Women & Kids Split Vertically) */}
             <div className="grid grid-rows-2 gap-4">
+              {/* Women */}
               <div className="relative bg-midnightNavyLight group overflow-hidden flex items-center justify-center min-h-[220px]">
                 <SafeImage
                   src={collectionCategories[1].img}
-                  alt="Accessories"
+                  alt={collectionCategories[1].title}
                   className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
                 <div className="relative z-10 text-center">
-                  <h2 className="font-display text-3xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">Accessories</h2>
-                  <Link href="/shop" className="bg-summitGold text-midnightNavy px-6 py-2 text-xs font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg">See Collection</Link>
+                  <h2 className="font-display text-3xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">
+                    {collectionCategories[1].title}
+                  </h2>
+                  <Link
+                    href={`/shop?category=${collectionCategories[1].category}`}
+                    className="bg-summitGold text-midnightNavy px-6 py-2.5 text-xs font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg"
+                  >
+                    See Collection
+                  </Link>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {collectionCategories.slice(2).map((cat) => (
-                  <div key={cat.title} className="relative bg-midnightNavyLight group overflow-hidden flex items-center justify-center min-h-[220px]">
-                    <SafeImage
-                      src={cat.img}
-                      alt={cat.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
-                    <div className="relative z-10 text-center">
-                      <h2 className="font-display text-2xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">{cat.title}</h2>
-                      <Link href="/shop" className="bg-summitGold text-midnightNavy px-4 py-2 text-[10px] font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg">See Collection</Link>
-                    </div>
-                  </div>
-                ))}
+
+              {/* Kids */}
+              <div className="relative bg-midnightNavyLight group overflow-hidden flex items-center justify-center min-h-[220px]">
+                <SafeImage
+                  src={collectionCategories[2].img}
+                  alt={collectionCategories[2].title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
+                <div className="relative z-10 text-center">
+                  <h2 className="font-display text-3xl text-summitGold uppercase tracking-widest mb-4 drop-shadow-lg">
+                    {collectionCategories[2].title}
+                  </h2>
+                  <Link
+                    href={`/shop?category=${collectionCategories[2].category}`}
+                    className="bg-summitGold text-midnightNavy px-6 py-2.5 text-xs font-bold uppercase hover:bg-summitGoldLight transition-colors shadow-lg"
+                  >
+                    See Collection
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

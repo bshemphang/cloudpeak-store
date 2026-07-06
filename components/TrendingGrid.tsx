@@ -9,7 +9,7 @@ export default function TrendingGrid() {
   const { products, loading } = useProducts();
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const filters = ['All', 'Footwear', 'POD Exclusives', 'Streetwear'];
+  const filters = ['All', 'Men', 'Women', 'Kids'];
 
   const filteredProducts = activeCategory === 'All'
     ? products.slice(0, 4)

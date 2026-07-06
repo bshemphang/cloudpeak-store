@@ -14,10 +14,9 @@ export const productImages: Record<string, string> = {
 };
 
 export const categoryImages = {
-  hoodies: u('1556821840-3a63f95609a7', 1000),
-  accessories: u('1572635196237-14b3f281503f', 800),
-  hats: u('1588850561407-ed78c282e89b', 600),
-  jackets: u('1551028719-00167b16eac5', 600),
+  men: u('1503342217505-b0a15ec3261c', 1000),
+  women: u('1551488831-00ddcb6c6bd3', 1000),
+  kids: u('1602810318383-e386cc2a3ccf', 1000),
   hero: u('1552374196-1ab2a1c593e8', 2000),
 } as const;
 

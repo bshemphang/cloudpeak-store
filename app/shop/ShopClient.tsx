@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProductCard from '../../components/ProductCard';
 import MountainRidgeDivider from '../../components/MountainRidgeDivider';
 import ScrollReveal from '../../components/ScrollReveal';
@@ -13,6 +13,16 @@ interface ShopClientProps {
 
 export default function ShopClient({ initialProducts }: ShopClientProps) {
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      if (cat && ['Men', 'Women', 'Kids'].includes(cat)) {
+        setActiveCategory(cat);
+      }
+    }
+  }, []);
 
   const categories = ['All', ...PRODUCT_CATEGORIES];
 
