@@ -14,9 +14,9 @@ export const productImages: Record<string, string> = {
 };
 
 export const categoryImages = {
-  men: u('1503342217505-b0a15ec3261c', 1000),
-  women: u('1551488831-00ddcb6c6bd3', 1000),
-  kids: u('1602810318383-e386cc2a3ccf', 1000),
+  men: u('1617137968427-85924c800a22', 1000),
+  women: u('1509631179647-0177331693ae', 1000),
+  kids: u('1622244099802-9b4d830f305f', 1000),
   hero: u('1552374196-1ab2a1c593e8', 2000),
 } as const;
 
