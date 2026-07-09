@@ -118,7 +118,10 @@ async function readFileProducts(): Promise<Product[]> {
   try {
     const raw = await fs.readFile(PRODUCTS_PATH, 'utf-8');
     const parsed = JSON.parse(raw) as Product[];
-    if (parsed && parsed.length > 0) return parsed.map(normalizeProduct);
+    if (parsed && parsed.length > 0) {
+      const filtered = parsed.filter(p => !['1', '2', '3', '4', '5', '6', '7', '8'].includes(p.id));
+      return filtered.map(normalizeProduct);
+    }
   } catch {
     // Return empty array if file does not exist or fails to parse
   }
@@ -138,6 +141,17 @@ async function writeFileProducts(products: Product[]): Promise<void> {
 
 async function getAllProductsSupabase(): Promise<Product[]> {
   const supabase = getSupabase()!;
+  
+  // Clean up any seed products from Supabase database
+  try {
+    await supabase
+      .from('products')
+      .delete()
+      .in('id', ['1', '2', '3', '4', '5', '6', '7', '8']);
+  } catch (err) {
+    logger.warn('Failed to clean up seed products from Supabase:', err);
+  }
+
   const data = await withRetry(async () => {
     const { data, error } = await supabase
       .from('products')
@@ -146,12 +160,13 @@ async function getAllProductsSupabase(): Promise<Product[]> {
     if (error) handleSupabaseError(error);
     return data;
   });
-  return (data as ProductRow[]).map(rowToProduct);
+  const products = (data as ProductRow[]).map(rowToProduct);
+  return products.filter(p => !['1', '2', '3', '4', '5', '6', '7', '8'].includes(p.id));
 }
 
 async function getProductBySlugSupabase(slug: string): Promise<Product | null> {
   const supabase = getSupabase()!;
-  return withRetry(async () => {
+  const product = await withRetry(async () => {
     const { data: bySlug, error: slugErr } = await supabase.from('products').select('*').eq('slug', slug).maybeSingle();
     if (slugErr) handleSupabaseError(slugErr);
     if (bySlug) return rowToProduct(bySlug as ProductRow);
@@ -159,6 +174,10 @@ async function getProductBySlugSupabase(slug: string): Promise<Product | null> {
     if (error) handleSupabaseError(error);
     return byId ? rowToProduct(byId as ProductRow) : null;
   });
+  if (product && ['1', '2', '3', '4', '5', '6', '7', '8'].includes(product.id)) {
+    return null;
+  }
+  return product;
 }
 
 async function createProductSupabase(input: ProductInput): Promise<Product> {
