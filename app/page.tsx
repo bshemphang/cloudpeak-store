@@ -147,6 +147,7 @@ export default function Home() {
               <SafeImage
                 src={collectionCategories[0].img}
                 alt={collectionCategories[0].title}
+                priority
                 className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
@@ -170,6 +171,7 @@ export default function Home() {
                 <SafeImage
                   src={collectionCategories[1].img}
                   alt={collectionCategories[1].title}
+                  priority
                   className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-midnightNavy/40 group-hover:bg-midnightNavy/60 transition-colors duration-500" />
