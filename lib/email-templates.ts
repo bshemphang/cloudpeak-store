@@ -35,7 +35,7 @@ function buildEmailHtml(title: string, body: string, footerNote?: string) {
   <div class="container">
     <div class="header">
       <h1>Cloudpeak</h1>
-      <p>Born For The Culture</p>
+      <p>Premium Streetwear</p>
     </div>
     <div class="content">
       ${body}

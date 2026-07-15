@@ -14,7 +14,7 @@ const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--f
 export const metadata = {
   metadataBase: new URL('https://cloudpeak.in'),
   title: 'Cloudpeak | Premier Streetwear Drops',
-  description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
+  description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
   icons: {
     icon: SITE.logo,
     apple: SITE.logo,
@@ -24,7 +24,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'Cloudpeak | Premier Streetwear Drops',
-    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
+    description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
     url: 'https://cloudpeak.in',
     siteName: 'Cloudpeak',
     images: [
@@ -41,7 +41,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Cloudpeak | Premier Streetwear Drops',
-    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
+    description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
     images: ['https://cloudpeak.in/images/logo.png'],
   },
 }

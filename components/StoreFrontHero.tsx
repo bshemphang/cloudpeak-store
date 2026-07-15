@@ -12,7 +12,7 @@ export default function StoreFrontHero() {
             <div key={group} className="flex items-center gap-8 px-4 shrink-0">
               {[...Array(5)].map((_, i) => (
                 <span key={i} className="font-display tracking-[0.2em] uppercase text-sm md:text-base shrink-0">
-                  Born For The Culture ◆ Premium Footwear ◆ Trending Drops ◆
+                  Premium Streetwear ◆ Premium Footwear ◆ Trending Drops ◆
                 </span>
               ))}
             </div>

@@ -5,7 +5,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Our Story | Cloudpeak',
-  description: 'Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce. Curated for the culture.',
+  description: 'Cloudpeak is a movement at the intersection of streetwear and premium e-commerce. Curated for you.',
   keywords: ['Cloudpeak story', 'streetwear brand', 'clothing India'],
 };
 
@@ -15,7 +15,7 @@ export default function About() {
 
       <section className="bg-midnightNavy py-16 md:py-24 text-center px-4">
         <h1 className="font-display text-5xl md:text-8xl text-summitGold uppercase tracking-wide leading-none mb-6">
-          For The Culture.
+          Our Story.
         </h1>
         <p className="text-summitGold/60 font-bold tracking-[0.3em] uppercase text-xs">
           Globally Minded ◆ India Born
@@ -29,7 +29,7 @@ export default function About() {
           <div className="bg-cardGray p-6 md:p-16 text-left border border-borderGray">
 
             <p className="font-display text-2xl md:text-5xl text-midnightNavy uppercase tracking-wide leading-snug mb-8">
-              Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce.
+              Cloudpeak is a movement at the intersection of streetwear and premium e-commerce.
             </p>
 
             <div className="space-y-6 text-sm text-midnightNavy/70 font-medium leading-relaxed">

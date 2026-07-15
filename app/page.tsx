@@ -8,14 +8,14 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Cloudpeak | Premier Streetwear Drops',
-  description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections. Young, Rich, Visionary.',
+  description: 'Shop exclusive premium streetwear, footwear, and apparel collections. Young, Rich, Visionary.',
   keywords: ['Cloudpeak', 'streetwear India', 'exclusive footwear India', 'streetwear drops', 'cloudpeak.in'],
   alternates: {
     canonical: 'https://cloudpeak.in',
   },
   openGraph: {
     title: 'Cloudpeak | Premier Streetwear Drops',
-    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
+    description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
     url: 'https://cloudpeak.in',
     siteName: 'Cloudpeak',
     images: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Cloudpeak | Premier Streetwear Drops',
-    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
+    description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
     images: ['https://cloudpeak.in/images/logo.png'],
   },
 };
@@ -221,7 +221,7 @@ export default function Home() {
             <div key={group} className="flex items-center gap-8 px-4 shrink-0">
               {[...Array(5)].map((_, i) => (
                 <span key={i} className="font-display tracking-[0.2em] uppercase text-lg md:text-xl shrink-0">
-                  FOR THE CULTURE ◆ BREAK THE MOLD ◆ CLOUDPEAK ◆
+                  PREMIUM STREETWEAR ◆ BREAK THE MOLD ◆ CLOUDPEAK ◆
                 </span>
               ))}
             </div>
