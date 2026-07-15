@@ -16,7 +16,7 @@ export async function GET() {
   <channel>
     <title>Cloudpeak Store</title>
     <link>${baseUrl}</link>
-    <description>Premium streetwear store Shillong</description>\n`;
+    <description>Premium streetwear store</description>\n`;
 
     for (const product of products) {
       const primaryImg = getProductPrimaryImage(product, 0);

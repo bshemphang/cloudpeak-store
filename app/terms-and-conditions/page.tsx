@@ -63,23 +63,19 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>5. Print-on-Demand (POD) &amp; Dropshipping Fulfilment</h2>
+        <h2>5. Order Production &amp; Fulfilment</h2>
         <p>
-          {SITE.name} operates a hybrid e-commerce model utilizing both Print-on-Demand custom printers and 
-          dropshipping footwear suppliers. 
+          {SITE.name} manages the design, production, and shipment of products through our local manufacturing and logistics networks.
         </p>
         <ul>
           <li>
-            <strong>POD Production:</strong> Apparel items marked as Print-on-Demand enter production immediately 
-            after payment confirmation. Custom layouts or graphics supplied by you are printed exactly as submitted.
+            <strong>Production:</strong> Apparel items are processed and prepared for shipping immediately after payment confirmation.
           </li>
           <li>
-            <strong>Delivery Estimates:</strong> Shipping times displayed are estimates. Sourcing, printing, and 
-            logistics are managed in coordination with third-party networks, which may occasionally cause delays.
+            <strong>Delivery Estimates:</strong> Shipping times displayed are estimates. Sourcing, manufacturing, and shipping are managed in coordination with logistics networks, which may occasionally cause delays.
           </li>
           <li>
-            <strong>Cancellations:</strong> Due to immediate automated processing, orders containing custom POD items 
-            cannot be canceled or altered once production begins.
+            <strong>Cancellations:</strong> Once an order is processed and enters the shipping phase, it cannot be canceled or altered.
           </li>
         </ul>
       </section>
@@ -117,7 +113,7 @@ export default function TermsAndConditionsPage() {
         <p>
           These Terms &amp; Conditions shall be governed by and construed in accordance with the laws of India. 
           Any disputes arising under or in connection with these terms shall be subject to the exclusive jurisdiction 
-          of the courts located in Shillong, Meghalaya.
+          of the courts in India.
         </p>
       </section>
 

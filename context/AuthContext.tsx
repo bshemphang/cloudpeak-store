@@ -266,9 +266,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             fullName: 'Streetwear Cultist',
             phone: '9876543210',
             address: '12 Peak View Road',
-            city: 'Shillong',
-            state: 'Meghalaya',
-            pincode: '793001',
+            city: 'New Delhi',
+            state: 'Delhi',
+            pincode: '110001',
           },
         };
         saveMockUsers(mockUsers);

@@ -13,8 +13,8 @@ const bebasNeue = Bebas_Neue({ weight: '400', subsets: ['latin'], variable: '--f
 
 export const metadata = {
   metadataBase: new URL('https://cloudpeak.in'),
-  title: 'Cloudpeak | Premier Streetwear & POD',
-  description: 'Shillong Born. For The Culture. Shop exclusive footwear, POD, and dropshipping apparel.',
+  title: 'Cloudpeak | Premier Streetwear Drops',
+  description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
   icons: {
     icon: SITE.logo,
     apple: SITE.logo,
@@ -23,8 +23,8 @@ export const metadata = {
     google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || 'YOUR_GSC_VERIFICATION_KEY_HERE',
   },
   openGraph: {
-    title: 'Cloudpeak | Premier Streetwear & POD',
-    description: 'Shillong Born. For The Culture. Shop exclusive footwear, POD, and dropshipping apparel.',
+    title: 'Cloudpeak | Premier Streetwear Drops',
+    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
     url: 'https://cloudpeak.in',
     siteName: 'Cloudpeak',
     images: [
@@ -40,8 +40,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cloudpeak | Premier Streetwear & POD',
-    description: 'Shillong Born. For The Culture. Shop exclusive footwear, POD, and dropshipping apparel.',
+    title: 'Cloudpeak | Premier Streetwear Drops',
+    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
     images: ['https://cloudpeak.in/images/logo.png'],
   },
 }

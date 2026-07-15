@@ -12,7 +12,7 @@ export default function StoreFrontHero() {
             <div key={group} className="flex items-center gap-8 px-4 shrink-0">
               {[...Array(5)].map((_, i) => (
                 <span key={i} className="font-display tracking-[0.2em] uppercase text-sm md:text-base shrink-0">
-                  Shillong Born ◆ Premium Footwear ◆ Custom POD ◆ Trending Drops ◆
+                  Born For The Culture ◆ Premium Footwear ◆ Trending Drops ◆
                 </span>
               ))}
             </div>
@@ -32,7 +32,7 @@ export default function StoreFrontHero() {
             Step Up. <br /> Stand Out.
           </h1>
           <p className="text-storeWhite/90 font-bold tracking-widest uppercase text-sm mb-10 drop-shadow-md">
-            Exclusive Sneakers, Custom POD Apparel &amp; Trending Gear
+            Exclusive Sneakers &amp; Trending Streetwear Gear
           </p>
           <Link href="/shop" className="bg-summitGold text-midnightNavy px-12 py-4 text-sm font-black uppercase tracking-widest hover:bg-summitGoldLight border-2 border-summitGold transition-colors duration-300">
             Shop The Collection

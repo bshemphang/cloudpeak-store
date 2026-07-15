@@ -5,8 +5,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Our Story | Cloudpeak',
-  description: 'Born from the unapologetic energy of the Northeast, Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce. Shillong Born. Globally Minded.',
-  keywords: ['Cloudpeak story', 'Shillong streetwear', 'Northeast streetwear brand', 'POD clothing India'],
+  description: 'Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce. Curated for the culture.',
+  keywords: ['Cloudpeak story', 'streetwear brand', 'clothing India'],
 };
 
 export default function About() {
@@ -18,7 +18,7 @@ export default function About() {
           For The Culture.
         </h1>
         <p className="text-summitGold/60 font-bold tracking-[0.3em] uppercase text-xs">
-          Shillong Born ◆ Globally Minded
+          Globally Minded ◆ India Born
         </p>
       </section>
 
@@ -29,27 +29,27 @@ export default function About() {
           <div className="bg-cardGray p-6 md:p-16 text-left border border-borderGray">
 
             <p className="font-display text-2xl md:text-5xl text-midnightNavy uppercase tracking-wide leading-snug mb-8">
-              Born from the unapologetic energy of the Northeast, Cloudpeak isn&apos;t just retail. It&apos;s a movement.
+              Cloudpeak is a movement at the intersection of streetwear culture and premium e-commerce.
             </p>
 
             <div className="space-y-6 text-sm text-midnightNavy/70 font-medium leading-relaxed">
               <p>
-                We operate at the intersection of streetwear culture and premium e-commerce. Whether we are designing premium curated collections or engineering bespoke, high-quality Print-on-Demand (POD) apparel, our rigorous commitment to quality remains our northern star.
+                We design and curate premium collections, ensuring our rigorous commitment to quality remains our northern star. We believe in providing premium apparel that speaks to the bold and the visionary.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-y border-borderGray my-8">
                 <div>
-                  <h3 className="font-bold text-summitGoldDark uppercase tracking-widest text-xs mb-3">The Mission</h3>
-                  <p>To curate and deliver high-grade lifestyle pieces that empower the modern youth to walk with confidence and cultural pride.</p>
+                  <h3 className="font-bold text-summitGoldDark uppercase tracking-widest text-xs mb-3">Our Mission</h3>
+                  <p>To curate and deliver high-grade streetwear and lifestyle pieces that empower you to express your unique style with confidence.</p>
                 </div>
                 <div>
-                  <h3 className="font-bold text-summitGoldDark uppercase tracking-widest text-xs mb-3">The Method</h3>
-                  <p>A seamless digital experience paired with a highly vetted supply chain, ensuring every product represents peak performance and aesthetics.</p>
+                  <h3 className="font-bold text-summitGoldDark uppercase tracking-widest text-xs mb-3">Our Vision</h3>
+                  <p>Combining premium fabrics with clean designs, ensuring every drop represents peak aesthetic expression and durability.</p>
                 </div>
               </div>
 
               <p>
-                We don&apos;t follow trends; we curate them for the bold. Welcome to the peak.
+                We don&apos;t follow trends; we curate them. Welcome to the peak.
               </p>
             </div>
 

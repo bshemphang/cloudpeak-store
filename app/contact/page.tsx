@@ -5,8 +5,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Cloudpeak',
-  description: 'Get in touch with the Cloudpeak support team via WhatsApp for styling, pre-orders, custom Print-on-Demand (POD) inquiries, and brand collaborations.',
-  keywords: ['Cloudpeak support', 'Cloudpeak WhatsApp', 'custom streetwear design Shillong', 'dropshipping partnerships India'],
+  description: 'Get in touch with the Cloudpeak support team via WhatsApp for styling, pre-orders, and brand collaborations.',
+  keywords: ['Cloudpeak support', 'Cloudpeak WhatsApp', 'streetwear collaborations', 'apparel partnerships India'],
 };
 
 export default function Contact() {
@@ -34,7 +34,7 @@ export default function Contact() {
               <div>
                 <h2 className="font-display text-2xl text-midnightNavy uppercase tracking-widest mb-4">VIP WhatsApp</h2>
                 <p className="text-midnightNavy/70 text-sm mb-8 leading-relaxed font-medium">
-                  Skip the wait. Connect instantly with our styling and support team via WhatsApp for personalized assistance, order tracking, and exclusive POD inquiries.
+                  Skip the wait. Connect instantly with our styling and support team via WhatsApp for personalized assistance, order tracking, and collaborations.
                 </p>
               </div>
               <a
@@ -56,17 +56,17 @@ export default function Contact() {
               <div>
                 <h2 className="font-display text-2xl text-midnightNavy uppercase tracking-widest mb-4">Collabs & B2B</h2>
                 <p className="text-midnightNavy/70 text-sm mb-8 leading-relaxed font-medium">
-                  For brand partnerships, bulk Print-on-Demand orders, and media inquiries, our corporate team is ready to build.
+                  For brand partnerships, bulk orders, and media inquiries, our team is ready to build.
                 </p>
               </div>
               <div className="space-y-4 border-t border-borderGray pt-6">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-midnightNavy/50 mb-1">Email</p>
-                  <a href="mailto:collabs@cloudpeak.in" className="text-midnightNavy font-bold uppercase tracking-widest text-sm hover:text-summitGoldDark transition-colors">collabs@cloudpeak.in</a>
+                  <a href="mailto:cloudpeakindia@gmail.com" className="text-midnightNavy font-bold uppercase tracking-widest text-sm hover:text-summitGoldDark transition-colors">cloudpeakindia@gmail.com</a>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-midnightNavy/50 mb-1">HQ</p>
-                  <p className="text-midnightNavy font-bold uppercase tracking-widest text-sm">Shillong, Meghalaya</p>
+                  <p className="text-midnightNavy font-bold uppercase tracking-widest text-sm">India</p>
                 </div>
               </div>
             </div>

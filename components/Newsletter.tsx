@@ -45,7 +45,7 @@ export default function Newsletter() {
           Join Our Community!
         </h2>
         <p className="text-midnightNavy/60 text-sm mb-8 max-w-lg mx-auto">
-          Subscribe for early collection access, exclusive streetwear drops, and news from the Shillong peak.
+          Subscribe for early collection access, exclusive streetwear drops, and brand updates.
         </p>
         <form onSubmit={handleSubscribe} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
           <input

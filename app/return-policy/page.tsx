@@ -3,7 +3,7 @@ import { SITE } from '../../lib/site';
 
 export const metadata = {
   title: 'Return & Refund Policy | Cloudpeak',
-  description: 'Cloudpeak return, exchange, and refund policy for POD, dropshipped, and streetwear orders.',
+  description: 'Cloudpeak return, exchange, and refund policy for streetwear and apparel orders.',
 };
 
 export default function ReturnPolicyPage() {
@@ -16,7 +16,7 @@ export default function ReturnPolicyPage() {
         <h2>1. Overview</h2>
         <p>
           At {SITE.name}, we stand behind the quality of every product we sell — whether it is
-          Print-on-Demand apparel, dropshipped footwear, or curated streetwear. We want you to
+          premium apparel, footwear, or curated streetwear. We want you to
           shop with confidence. If something isn&apos;t right, we&apos;re here to make it right.
         </p>
         <p>
@@ -40,44 +40,43 @@ export default function ReturnPolicyPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>3. Print-on-Demand (POD) Products</h2>
+        <h2>3. Custom &amp; Special Edition Products</h2>
         <p>
-          POD items are produced specifically for you after your order is placed. Because of this
+          Custom items are produced specifically for you after your order is placed. Because of this
           made-to-order nature, the following conditions apply:
         </p>
         <ul>
           <li>
-            <strong>Standard POD apparel</strong> (pre-designed Cloudpeak graphics, no custom text):
+            <strong>Standard apparel items</strong> (pre-designed Cloudpeak graphics, no custom text):
             eligible for return within 15 days if unworn and in original condition.
           </li>
           <li>
-            <strong>Custom / personalised POD items</strong> (custom names, text, or uploaded
+            <strong>Custom / personalised items</strong> (custom names, text, or uploaded
             designs): <strong>not eligible for return or exchange</strong> unless the item is
             defective, misprinted, or materially different from what was ordered.
           </li>
           <li>
-            Slight colour variations between screen preview and printed product are normal in POD
+            Slight colour variations between screen preview and printed product are normal in apparel
             production and do not qualify as defects.
           </li>
         </ul>
         <p>
-          If you receive a POD item with a printing defect, incorrect size, or wrong design, contact
+          If you receive a custom item with a printing defect, incorrect size, or wrong design, contact
           us within 48 hours of delivery with clear photos. We will arrange a free replacement or
           full refund at no cost to you.
         </p>
       </section>
 
       <section className="space-y-4">
-        <h2>4. Dropshipped Products</h2>
+        <h2>4. Footwear &amp; Select Accessories</h2>
         <p>
-          Select footwear, accessories, and lifestyle items are fulfilled directly from our
-          dropshipping partners. These items are subject to the same 15-day return window, provided
+          Select footwear, accessories, and lifestyle items are subject to the same 15-day return window, provided
           they meet the condition requirements above.
         </p>
         <ul>
           <li>Footwear must be tried indoors only — shoes showing outdoor wear are not eligible</li>
           <li>Original shoe box and all included accessories must be returned</li>
-          <li>Dropshipped items may require return shipping to a designated hub; we will provide a prepaid label where applicable</li>
+          <li>Returns may require shipping to a designated hub; we will provide a prepaid label where applicable</li>
         </ul>
       </section>
 
@@ -85,7 +84,7 @@ export default function ReturnPolicyPage() {
         <h2>5. Non-Returnable Items</h2>
         <p>The following items cannot be returned or exchanged:</p>
         <ul>
-          <li>Custom or personalised POD products (unless defective or incorrect)</li>
+          <li>Custom or personalised products (unless defective or incorrect)</li>
           <li>Items marked as final sale or clearance</li>
           <li>Undergarments, socks, and intimate apparel (for hygiene reasons)</li>
           <li>Items returned after the 15-day window</li>
@@ -156,8 +155,7 @@ export default function ReturnPolicyPage() {
           difference. If lower, we will refund the difference.
         </p>
         <p>
-          Exchanges for POD custom items are not available. Exchanges for standard POD and
-          dropshipped items are processed within 7–14 business days after we receive the original item.
+          Exchanges for custom items are not available. Exchanges for standard items are processed within 7–14 business days after we receive the original item.
         </p>
       </section>
 
@@ -190,8 +188,8 @@ export default function ReturnPolicyPage() {
       <section className="space-y-4">
         <h2>11. Cancellations</h2>
         <p>
-          Orders may be cancelled within 2 hours of placement for standard dropshipped items, provided
-          the order has not yet been dispatched. POD orders enter production quickly and may not be
+          Orders may be cancelled within 2 hours of placement, provided
+          the order has not yet been dispatched. Custom orders may enter production quickly and may not be
           cancellable once production has begun. Contact us immediately via WhatsApp for the fastest
           cancellation processing.
         </p>

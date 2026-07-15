@@ -35,7 +35,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
       <section className="bg-midnightNavy py-16 md:py-20 text-center px-4">
         <h1 className="font-display text-5xl md:text-8xl text-summitGold uppercase tracking-wide mb-4">The Collection</h1>
         <p className="text-storeWhite/60 text-sm font-medium tracking-widest uppercase max-w-2xl mx-auto">
-          Curated dropshipping lifestyle pieces and premium POD drops.
+          Curated premium streetwear collections.
         </p>
       </section>
 

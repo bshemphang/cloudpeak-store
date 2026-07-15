@@ -6,8 +6,8 @@ export const revalidate = 3600; // Revalidate every hour
 
 export const metadata: Metadata = {
   title: 'Shop All Drops | Cloudpeak',
-  description: 'Explore the full Cloudpeak collection. Shop exclusive hoodies, accessories, hats, and footwear born in Shillong and curated for the culture.',
-  keywords: ['Cloudpeak catalog', 'streetwear drops', 'custom streetwear hoodies', 'buy sneakers India', 'Shillong fashion'],
+  description: 'Explore the full Cloudpeak collection. Shop exclusive hoodies, t-shirts, sweatshirts, pants, and footwear curated for the culture.',
+  keywords: ['Cloudpeak catalog', 'streetwear drops', 'streetwear hoodies', 'buy sneakers India', 'India fashion'],
   alternates: {
     canonical: 'https://cloudpeak.in/shop',
   },

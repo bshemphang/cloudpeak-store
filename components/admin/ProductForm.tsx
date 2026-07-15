@@ -189,7 +189,7 @@ export default function ProductForm({
                 value={form.details}
                 onChange={(e) => setForm({ ...form, details: e.target.value })}
                 className="field-input rounded-lg font-mono text-xs"
-                placeholder="100% heavy cotton&#10;Screen-printed front graphic&#10;Made in Shillong"
+                placeholder="100% heavy cotton&#10;Screen-printed front graphic&#10;Made in India"
               />
             </div>
           </div>

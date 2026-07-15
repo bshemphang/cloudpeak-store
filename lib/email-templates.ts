@@ -35,14 +35,14 @@ function buildEmailHtml(title: string, body: string, footerNote?: string) {
   <div class="container">
     <div class="header">
       <h1>Cloudpeak</h1>
-      <p>Shillong Born ◆ For The Culture</p>
+      <p>Born For The Culture</p>
     </div>
     <div class="content">
       ${body}
     </div>
     <div class="footer">
       <p>This is a transaction email regarding your account or order at Cloudpeak.</p>
-      <p>© ${new Date().getFullYear()} Cloudpeak. Shillong, Meghalaya, India.</p>
+      <p>© ${new Date().getFullYear()} Cloudpeak. India.</p>
       <p><a href="https://cloudpeak.in/return-policy">Return Policy</a> · <a href="https://cloudpeak.in/terms-and-conditions">Terms of Service</a></p>
       ${footerNote ? `<p style="margin-top:15px; font-style:italic;">${footerNote}</p>` : ''}
     </div>
@@ -170,7 +170,7 @@ export function buildOrderCancelledTemplate(order: Order): string {
         : '<p>Since no payment was completed for this order, no refund transaction was required.</p>'
     }
     
-    <p>If you have any questions or did not intend to cancel this order, please contact our helpdesk at support@cloudpeak.in.</p>
+    <p>If you have any questions or did not intend to cancel this order, please contact our helpdesk at cloudpeakindia@gmail.com.</p>
   `;
 
   return buildEmailHtml(`Order Cancelled - ${order.id}`, body);
@@ -184,10 +184,10 @@ export function buildNewsletterWelcomeTemplate(email: string): string {
     <p>Get ready for:</p>
     <ul>
       <li>Exclusive early access to streetwear collections and drops.</li>
-      <li>Custom Print-on-Demand (POD) styling tips and collaborations.</li>
-      <li>Culture updates, local designer highlights, and news from Shillong.</li>
+      <li>Exclusive styling tips and brand collaborations.</li>
+      <li>Culture updates, local designer highlights, and brand news.</li>
     </ul>
-    <p>We are dedicated to crafting premium, visionary streetwear that represents the unapologetic culture of the Northeast. Stay tuned — our next drop is coming sooner than you think!</p>
+    <p>We are dedicated to crafting premium, visionary streetwear. Stay tuned — our next drop is coming sooner than you think!</p>
     
     <div style="margin: 20px 0; text-align: center;">
       <a href="https://cloudpeak.in/shop" class="btn">Browse Collection</a>

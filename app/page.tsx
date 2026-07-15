@@ -7,15 +7,15 @@ import { categoryImages } from '../lib/images';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
-  description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel. Young, Rich, Visionary.',
-  keywords: ['Cloudpeak', 'streetwear India', 'Print on Demand apparel', 'custom hoodies Shillong', 'exclusive footwear India', 'dropshipping streetwear', 'cloudpeak.in'],
+  title: 'Cloudpeak | Premier Streetwear Drops',
+  description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections. Young, Rich, Visionary.',
+  keywords: ['Cloudpeak', 'streetwear India', 'exclusive footwear India', 'streetwear drops', 'cloudpeak.in'],
   alternates: {
     canonical: 'https://cloudpeak.in',
   },
   openGraph: {
-    title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
-    description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel.',
+    title: 'Cloudpeak | Premier Streetwear Drops',
+    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
     url: 'https://cloudpeak.in',
     siteName: 'Cloudpeak',
     images: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         url: 'https://cloudpeak.in/images/logo.png',
         width: 1200,
         height: 630,
-        alt: 'Cloudpeak Streetwear & POD',
+        alt: 'Cloudpeak Streetwear',
       },
     ],
     locale: 'en_IN',
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cloudpeak | Premier Streetwear & Print-On-Demand Drops',
-    description: 'Shillong Born. For The Culture. Shop exclusive footwear, custom Print-On-Demand (POD), and premium dropshipped streetwear apparel.',
+    title: 'Cloudpeak | Premier Streetwear Drops',
+    description: 'For The Culture. Shop exclusive streetwear, footwear, and apparel collections.',
     images: ['https://cloudpeak.in/images/logo.png'],
   },
 };
@@ -53,11 +53,11 @@ export default function Home() {
         "name": "Cloudpeak",
         "url": "https://cloudpeak.in",
         "logo": "https://cloudpeak.in/images/logo-bg.png",
-        "email": "support@cloudpeak.in",
+        "email": "cloudpeakindia@gmail.com",
         "address": {
           "@type": "PostalAddress",
-          "addressLocality": "Shillong",
-          "addressRegion": "Meghalaya",
+          "addressLocality": "India",
+          "addressRegion": "India",
           "addressCountry": "IN"
         }
       },
@@ -106,7 +106,7 @@ export default function Home() {
             2026
           </h1>
           <p className="text-storeWhite/80 mt-6 font-medium tracking-widest uppercase text-xs md:text-sm mb-10 max-w-xl mx-auto">
-            Meghalaya&apos;s Premier Hub for Streetwear, Custom POD, and Exclusive Footwear.
+            India&apos;s Premier Hub for Streetwear and Exclusive Footwear.
           </p>
           <Link
             href="/shop"
@@ -221,7 +221,7 @@ export default function Home() {
             <div key={group} className="flex items-center gap-8 px-4 shrink-0">
               {[...Array(5)].map((_, i) => (
                 <span key={i} className="font-display tracking-[0.2em] uppercase text-lg md:text-xl shrink-0">
-                  FOR THE CULTURE ◆ BREAK THE MOLD ◆ SHILLONG BORN ◆
+                  FOR THE CULTURE ◆ BREAK THE MOLD ◆ CLOUDPEAK ◆
                 </span>
               ))}
             </div>

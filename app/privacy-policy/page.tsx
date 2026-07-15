@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
         <h2>1. Introduction</h2>
         <p>
           Welcome to {SITE.name} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). We operate an e-commerce
-          platform based in {SITE.location}, offering streetwear, Print-on-Demand (POD) apparel,
-          dropshipped footwear, and lifestyle products across India.
+          platform based in {SITE.location}, offering streetwear, apparel,
+          footwear, and lifestyle products across India.
         </p>
         <p>
           This Privacy Policy explains how we collect, use, disclose, and safeguard your information
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
         <ul>
           <li>Full name, delivery address, city, state, and PIN code</li>
           <li>Phone number and email address</li>
-          <li>Order details, including products, sizes, quantities, and custom POD specifications</li>
+          <li>Order details, including products, sizes, and quantities</li>
           <li>Payment-related information (processed securely by third-party payment gateways — we do not store full card details)</li>
           <li>Communications you send us via WhatsApp, email, or contact forms</li>
           <li>Newsletter subscription email address</li>
@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
         <ul>
           <li>Process, fulfil, and deliver your orders across India</li>
           <li>Communicate order confirmations, shipping updates, and customer support responses</li>
-          <li>Coordinate POD production and dropshipping fulfilment with our trusted partners</li>
+          <li>Coordinate production and shipping with our trusted logistics and manufacturing partners</li>
           <li>Process returns, refunds, and exchanges in accordance with our Return Policy</li>
           <li>Send promotional emails and updates (only if you have opted in; you may unsubscribe at any time)</li>
           <li>Improve our website, product catalogue, and customer experience</li>
@@ -61,23 +61,12 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section className="space-y-4">
-        <h2>4. POD &amp; Dropshipping Fulfillment</h2>
+        <h2>4. Order Fulfillment</h2>
         <p>
-          {SITE.name} operates a hybrid fulfilment model. Some products are produced on demand through
-          our Print-on-Demand partners, while others are sourced and shipped directly from
-          dropshipping suppliers.
+          {SITE.name} manages product production and fulfillment. Some products are manufactured in collaboration with our manufacturing partners, while others are shipped directly from our warehouse.
         </p>
         <p>
-          To fulfil your order, we share only the information necessary with our production and
-          logistics partners — typically your name, delivery address, phone number, product
-          specifications, and order reference. These partners are contractually required to use your
-          data solely for order fulfilment and are prohibited from using it for their own marketing
-          purposes.
-        </p>
-        <p>
-          POD items may involve custom designs or personalisation. Any artwork or text you submit
-          for custom orders is used exclusively to produce your item and is not shared beyond our
-          fulfilment network.
+          To fulfil your order, we share only the information necessary with our logistics and production partners — typically your name, delivery address, phone number, product specifications, and order reference. These partners are required to use your data solely for order fulfilment.
         </p>
       </section>
 
@@ -87,8 +76,8 @@ export default function PrivacyPolicyPage() {
         <ul>
           <li><strong>Payment processors</strong> — to handle secure online transactions (UPI, cards, net banking)</li>
           <li><strong>Shipping carriers</strong> — Delhivery, Blue Dart, India Post, and other pan-India logistics partners</li>
-          <li><strong>POD fulfilment partners</strong> — for on-demand apparel printing and production</li>
-          <li><strong>Dropshipping suppliers</strong> — for sourcing and direct-to-customer dispatch of select products</li>
+          <li><strong>Manufacturing partners</strong> — for apparel production</li>
+          <li><strong>Warehousing &amp; fulfillment centers</strong> — for direct-to-customer dispatch of select products</li>
           <li><strong>Analytics providers</strong> — to understand site traffic and improve performance</li>
           <li><strong>WhatsApp / Meta</strong> — when you initiate contact or place orders via WhatsApp</li>
         </ul>
@@ -171,7 +160,7 @@ export default function PrivacyPolicyPage() {
           <strong>{SITE.name}</strong><br />
           {SITE.location}<br />
           Email: <a href={`mailto:${SITE.email}`}>{SITE.email}</a><br />
-          Grievance Officer: privacy@cloudpeak.in
+          Grievance Officer: cloudpeakindia@gmail.com
         </p>
       </section>
     </PolicyLayout>
