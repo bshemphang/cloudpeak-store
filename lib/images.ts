@@ -14,9 +14,9 @@ export const productImages: Record<string, string> = {
 };
 
 export const categoryImages = {
-  men: u('1617137968427-85924c800a22', 1000),
-  women: u('1509631179647-0177331693ae', 1000),
-  kids: u('1607990283143-e81e7a2c93ab', 1000),
+  men: u('1583743814966-8936f5b7be1a', 1000),     // Streetwear model in black oversized graphic tee
+  women: u('1515886657613-9f3515b0c78f', 1000),   // Female model in yellow streetwear outfit
+  kids: u('1602810318383-e386cc2a3ccf', 1000),    // Kid in urban beanie & streetwear hoodie style
   hero: u('1552374196-1ab2a1c593e8', 2000),
 } as const;
 
