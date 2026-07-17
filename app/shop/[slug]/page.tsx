@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getProductBySlug } from '../../../lib/products-store';
+import { getProductBySlug, getAllProducts } from '../../../lib/products-store';
 import { getProductPrimaryImage, normalizeProduct } from '../../../lib/product-utils';
 import ProductDetailClient from './ProductDetailClient';
 
@@ -56,6 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   const rawProduct = await getProductBySlug(slug);
+  const allProducts = await getAllProducts();
 
   if (!rawProduct) {
     notFound();
@@ -64,6 +65,14 @@ export default async function ProductDetailPage({ params }: Props) {
   const product = normalizeProduct(rawProduct);
   const primaryImg = getProductPrimaryImage(product, 0);
   const images = product.images && product.images.length > 0 ? product.images : [primaryImg];
+
+  // Similar products recommendation logic
+  const rawSimilar = allProducts.filter((p) => p.id !== product.id);
+  const sameCategory = rawSimilar.filter((p) => p.category === product.category);
+  const otherCategory = rawSimilar.filter((p) => p.category !== product.category);
+  const similarProducts = [...sameCategory, ...otherCategory]
+    .slice(0, 4)
+    .map(normalizeProduct);
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -92,7 +101,7 @@ export default async function ProductDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={product} similarProducts={similarProducts} />
     </>
   );
 }

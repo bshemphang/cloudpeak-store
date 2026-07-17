@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IMAGE_FALLBACK } from '../lib/images';
 
@@ -20,6 +20,10 @@ export default function SafeImage({
   priority = false,
 }: SafeImageProps) {
   const [imgSrc, setImgSrc] = useState(src);
+
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
 
   // Split wrapper layout/sizing classes from image visual/transition classes
   const classesList = className.split(' ');

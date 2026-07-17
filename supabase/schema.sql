@@ -47,13 +47,16 @@ create table if not exists profiles (
 -- Enable Row Level Security
 alter table profiles enable row level security;
 
--- Policies
+-- Policies (Dropped first to avoid "policy already exists" errors when run multiple times)
+drop policy if exists "Users can view their own profile." on profiles;
 create policy "Users can view their own profile." on profiles
   for select using (auth.uid() = id);
 
+drop policy if exists "Users can insert their own profile." on profiles;
 create policy "Users can insert their own profile." on profiles
   for insert with check (auth.uid() = id);
 
+drop policy if exists "Users can update their own profile." on profiles;
 create policy "Users can update their own profile." on profiles
   for update using (auth.uid() = id);
 
@@ -61,4 +64,30 @@ create policy "Users can update their own profile." on profiles
 -- Alter products table to support size-specific pricing
 alter table products add column if not exists size_prices jsonb not null default '{}';
 
+-- Reviews table
+create table if not exists reviews (
+  id uuid primary key default gen_random_uuid(),
+  product_id text not null references products(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  user_email text not null,
+  user_name text not null,
+  rating integer not null check (rating >= 1 and rating <= 5),
+  comment text not null default '',
+  media jsonb not null default '[]',
+  created_at timestamptz not null default now()
+);
 
+-- Indexing for speed
+create index if not exists reviews_product_id_idx on reviews (product_id);
+create index if not exists reviews_created_at_idx on reviews (created_at desc);
+
+-- RLS policies
+alter table reviews enable row level security;
+
+drop policy if exists "Reviews are publicly visible." on reviews;
+create policy "Reviews are publicly visible." on reviews
+  for select using (true);
+
+drop policy if exists "Authenticated users can create reviews." on reviews;
+create policy "Authenticated users can create reviews." on reviews
+  for insert with check (auth.uid() = user_id);

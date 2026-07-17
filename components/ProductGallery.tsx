@@ -48,9 +48,39 @@ export default function ProductGallery({ images, alt, isNew }: ProductGalleryPro
           </span>
         )}
         {gallery.length > 1 && (
-          <span className="absolute bottom-4 right-4 bg-midnightNavy/80 text-storeWhite text-[10px] font-bold uppercase tracking-widest px-3 py-1 z-10">
-            {selected + 1} / {gallery.length}
-          </span>
+          <>
+            {/* Nav Arrows */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setSelected((prev) => (prev - 1 + gallery.length) % gallery.length);
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-midnightNavy/60 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 select-none cursor-pointer"
+              aria-label="Previous image"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setSelected((prev) => (prev + 1) % gallery.length);
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-midnightNavy/60 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 select-none cursor-pointer"
+              aria-label="Next image"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <span className="absolute bottom-4 right-4 bg-midnightNavy/80 text-storeWhite text-[10px] font-bold uppercase tracking-widest px-3 py-1 z-10">
+              {selected + 1} / {gallery.length}
+            </span>
+          </>
         )}
       </div>
     </div>
