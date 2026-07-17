@@ -11,6 +11,7 @@ type ProductGalleryProps = {
 
 export default function ProductGallery({ images, alt, isNew }: ProductGalleryProps) {
   const [selected, setSelected] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const gallery = images.length > 0 ? images : ['/images/product-fallback.svg'];
 
   return (
@@ -35,7 +36,10 @@ export default function ProductGallery({ images, alt, isNew }: ProductGalleryPro
         </div>
       )}
 
-      <div className="relative flex-1 aspect-[3/4] bg-cardGray overflow-hidden group">
+      <div
+        onClick={() => setZoomOpen(true)}
+        className="relative flex-1 aspect-[3/4] bg-cardGray overflow-hidden group cursor-zoom-in"
+      >
         <SafeImage
           src={gallery[selected]}
           alt={`${alt} — view ${selected + 1}`}
@@ -54,6 +58,7 @@ export default function ProductGallery({ images, alt, isNew }: ProductGalleryPro
               type="button"
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 setSelected((prev) => (prev - 1 + gallery.length) % gallery.length);
               }}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-midnightNavy/60 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 select-none cursor-pointer"
@@ -67,6 +72,7 @@ export default function ProductGallery({ images, alt, isNew }: ProductGalleryPro
               type="button"
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 setSelected((prev) => (prev + 1) % gallery.length);
               }}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-midnightNavy/60 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 select-none cursor-pointer"
@@ -83,6 +89,66 @@ export default function ProductGallery({ images, alt, isNew }: ProductGalleryPro
           </>
         )}
       </div>
+
+      {/* Lightbox Zoom Modal */}
+      {zoomOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 cursor-zoom-out animate-fade-in"
+          onClick={() => setZoomOpen(false)}
+        >
+          <button
+            type="button"
+            className="absolute top-4 right-4 text-white text-3xl font-black cursor-pointer hover:text-summitGold transition-colors z-[110]"
+            onClick={() => setZoomOpen(false)}
+            aria-label="Close zoom view"
+          >
+            ✕
+          </button>
+          
+          {gallery.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelected((prev) => (prev - 1 + gallery.length) % gallery.length);
+                }}
+                className="absolute left-6 top-1/2 -translate-y-1/2 bg-midnightNavy/80 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-12 h-12 rounded-full flex items-center justify-center transition-all z-[110] select-none cursor-pointer"
+                aria-label="Previous image"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelected((prev) => (prev + 1) % gallery.length);
+                }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 bg-midnightNavy/80 hover:bg-midnightNavy text-summitGold hover:text-summitGoldLight w-12 h-12 rounded-full flex items-center justify-center transition-all z-[110] select-none cursor-pointer"
+                aria-label="Next image"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          <div 
+            className="relative max-w-4xl max-h-[85vh] w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={gallery[selected]}
+              alt={alt}
+              className="max-w-full max-h-[85vh] object-contain shadow-2xl transition-all duration-300"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
