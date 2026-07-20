@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { updateOrderStatus } from '../../../lib/orders-store';
+import { getOrderById, updateOrderStatus } from '../../../lib/orders-store';
 import { logger } from '../../../lib/logger';
 
 export async function POST(request: NextRequest) {
@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
         { error: 'Payment verification failed: Signature mismatch.' },
         { status: 400 }
       );
+    }
+
+    // Check if order was already marked as paid (e.g. by webhook)
+    const existingOrder = await getOrderById(db_order_id);
+    if (existingOrder && (existingOrder.status === 'prebook_paid' || existingOrder.status === 'confirmed')) {
+      logger.info(`Payment verification API: Order ${db_order_id} is already marked as ${existingOrder.status}. Skipping duplicate email.`);
+      return NextResponse.json({ success: true, order: existingOrder });
     }
 
     // Update order status in the database/store with payment details

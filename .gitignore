@@ -40,6 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# order data (customer PII — never commit)
+# order data & secrets (customer PII — never commit)
 /data/orders.json
 /data/products.json
+/razorpay/
