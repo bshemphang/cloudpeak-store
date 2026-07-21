@@ -29,7 +29,7 @@ export const metadata = {
     siteName: 'Cloudpeak',
     images: [
       {
-        url: 'https://cloudpeak.in/images/logo.png',
+        url: 'https://cloudpeak.in/images/square-image.png',
         width: 1200,
         height: 630,
         alt: 'Cloudpeak Streetwear',
@@ -42,7 +42,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Cloudpeak | Premier Streetwear Drops',
     description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
-    images: ['https://cloudpeak.in/images/logo.png'],
+    images: ['https://cloudpeak.in/images/square-image.png'],
   },
 }
 

@@ -22,7 +22,7 @@ export default function Logo({ variant = 'navbar', className = '' }: LogoProps) 
     <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/images/logo-bg.png"
+        src={SITE.logo}
         alt={`${SITE.name} Icon`}
         className={`${imageStyles[variant]} w-auto object-contain block`}
       />

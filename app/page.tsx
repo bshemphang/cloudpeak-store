@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     siteName: 'Cloudpeak',
     images: [
       {
-        url: 'https://cloudpeak.in/images/logo.png',
+        url: 'https://cloudpeak.in/images/square-image.png',
         width: 1200,
         height: 630,
         alt: 'Cloudpeak Streetwear',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Cloudpeak | Premier Streetwear Drops',
     description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
-    images: ['https://cloudpeak.in/images/logo.png'],
+    images: ['https://cloudpeak.in/images/square-image.png'],
   },
 };
 
@@ -52,7 +52,7 @@ export default function Home() {
         "@id": "https://cloudpeak.in/#organization",
         "name": "Cloudpeak",
         "url": "https://cloudpeak.in",
-        "logo": "https://cloudpeak.in/images/logo-bg.png",
+        "logo": "https://cloudpeak.in/images/square-image.png",
         "email": "cloudpeakindia@gmail.com",
         "address": {
           "@type": "PostalAddress",
