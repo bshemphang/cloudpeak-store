@@ -16,8 +16,8 @@ export const metadata = {
   title: 'Cloudpeak | Premier Streetwear Drops',
   description: 'Shop exclusive premium streetwear, footwear, and apparel collections.',
   icons: {
-    icon: SITE.logo,
-    apple: SITE.logo,
+    icon: '/images/square-image.png',
+    apple: '/images/square-image.png',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || 'YOUR_GSC_VERIFICATION_KEY_HERE',

@@ -1,6 +1,6 @@
 export const SITE = {
   name: 'Cloudpeak',
-  logo: '/images/square-image.png',
+  logo: '/images/logo-bg.png',
   email: 'cloudpeakindia@gmail.com',
   collabEmail: 'cloudpeakindia@gmail.com',
   location: 'India',
